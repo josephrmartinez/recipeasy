@@ -37,6 +37,7 @@ const recipeResponse = {
 function App() {
   const [recipe, setRecipe] = useState(recipeResponse)
   const [popup, setPopup] = useState(true)
+  const [selectedIngredient, setSelectedIngredient] = useState("d")
 
   
 
@@ -46,7 +47,8 @@ function App() {
     return (
       <li
         className='text-sm cursor-pointer hover:opacity-60'
-        key={each}>{each}</li>
+        key={each}
+        onClick={() => { selectIngredient(each) }}>{each}</li>
     )
   })
   const instructions = recipe['instructions'].map((each, index) => {
@@ -55,6 +57,14 @@ function App() {
     )
   })
   
+  function togglePopup() {
+    setPopup(!popup)
+  }
+
+  function selectIngredient(each) {
+    setSelectedIngredient(each)
+    togglePopup()
+  }
 
   return (
     <div className='flex flex-col items-center'>
@@ -69,9 +79,10 @@ function App() {
       </div>
       {popup && 
         <div className='outline bg-white w-80 h-72 absolute top-56 flex flex-col items-center justify-around'>
+          <div className='text-sm'>{selectedIngredient}</div>
           <button className='btn btn-outline w-48'>substitute</button>
           <button className='btn btn-outline w-48'>make without</button>
-          <button className='btn btn-outline w-48'>cancel</button>
+          <button className='btn btn-outline w-48' onClick={togglePopup}>cancel</button>
         </div>}
     </div>
   )
