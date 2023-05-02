@@ -6,42 +6,12 @@ import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
 
 
-const recipeResponse = {
-  "dish": "minestrone",
-"ingredients": [
-"1 tablespoon olive oil",
-"1 onion, diced",
-"2 cloves garlic, minced",
-"2 carrots, diced",
-"2 stalks celery, diced",
-"1 zucchini, diced",
-"1 yellow squash, diced",
-"1 can (14.5 ounces) diced tomatoes",
-"6 cups chicken or vegetable broth",
-"1 can (15 ounces) cannellini beans, drained and rinsed",
-"1 teaspoon dried basil",
-"1 teaspoon dried oregano",
-"1/2 teaspoon dried thyme",
-"Salt and pepper, to taste",
-"1 cup small pasta, such as ditalini or small shells",
-"Grated Parmesan cheese, for serving"
-],
-"instructions": [
-"In a large pot or Dutch oven, heat the olive oil over medium heat. Add the onion and garlic and cook until softened, about 5 minutes.",
-"Add the carrots, celery, zucchini, and yellow squash to the pot and cook for another 5 minutes.",
-"Add the diced tomatoes, broth, beans, basil, oregano, thyme, salt, and pepper to the pot. Bring to a boil and then reduce the heat to low. Simmer for 20-30 minutes, or until the vegetables are tender.",
-"Meanwhile, cook the pasta according to the package directions. Drain and set aside.",
-"When the soup is done cooking, add the cooked pasta to the pot and stir to combine.",
-"Serve the soup hot, topped with grated Parmesan cheese. Enjoy!"
-]
-}
-
-
 function App() {
   const [recipe, setRecipe] = useState({})
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
+  const [loading, setLoading] = useState(false)
   
 
   let dishName = ""
@@ -50,7 +20,6 @@ function App() {
 
   if (recipe && recipe['dish'] && recipe['ingredients']) {
     dishName = recipe['dish']
-    console.log(dishName)
     ingredients = recipe['ingredients'].map(each => {
       return (
         <li
@@ -77,7 +46,7 @@ function App() {
 
   function getRecipe(e) {
     e.preventDefault();
-    console.log("getting recipe...");
+    setLoading(true);
 
     // Get api key
     const docRef = doc(db, "api-keys", "openai-api-key");
@@ -91,8 +60,8 @@ function App() {
         });         
 
         const openai = new OpenAIApi(configuration);
-        const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": ["", "", ""],
-        "instructions": ["", "", ""]}`;
+        const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": [array of strings],
+        "instructions": [array of strings]}`;
 
         openai.createChatCompletion({
           model: "gpt-3.5-turbo",
@@ -104,21 +73,20 @@ function App() {
 
             console.log(completion);  
             console.log(generatedText);
+            setLoading(false)
             setRecipe(JSON.parse(generatedText));
           })
           .catch((error) => {
             console.log(error);
+            setLoading(false)
             setRecipe("");
           });
       })
       .catch((error) => {
         console.log(error);
+        setLoading(false)
         setRecipe("");
       });
-  }
-
-  async function getAPIkey() {
-          
   }
 
 
@@ -131,6 +99,15 @@ function App() {
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
       <button className='btn btn-primary my-6'
         onClick={getRecipe}>get recipe</button> 
+      {loading && 
+        <div role="status">
+        <svg aria-hidden="true" class="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-slate-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+        </svg>
+        <span class="sr-only">Loading...</span>
+        </div>
+        }
       {instructions.length > 1 && <div className=''>
         <div className='text-2xl font-bold my-3'>{dishName}</div>
         <div className='text-lg font-semibold my-3'>ingredients</div>
