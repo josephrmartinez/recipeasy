@@ -3,6 +3,7 @@ import './App.css'
 // import { openaiKey } from '../firebase'
 import { db } from '../firebase'
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { Configuration, OpenAIApi } from "openai";
 
 
 const recipeResponse = {
@@ -70,25 +71,39 @@ function App() {
 
   async function getRecipe (e) {
     e.preventDefault();
-
+    console.log("getting recipe...")
     try {
-      const docRef = await addDoc(collection(db, "user-inputs"), {
-        recipe: userInput,
-      });
-      console.log("Document written with ID: ", docRef.id);
+      // Get api key
+      const docRef = doc(db, 'api-keys', 'openai-api-key')
+      const docSnap = await getDoc(docRef)
+      const key = docSnap.data()
+      const openaiKey = key.key  
+
+      const configuration = new Configuration({
+        apiKey: openaiKey,
+        headers: {
+            "User-Agent": "skiptorecipe"
+        }
+    });         
+    const openai = new OpenAIApi(configuration);
+    const prompt = `return a recipe for ${userInput}`;
+    const completion = await openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+        });
+    
+    
+      const generatedText = completion.data.choices[0].message.content;
+      console.log(generatedText);
+      // update recipe
+
     } catch (e) {
       console.error("Error adding document: ", e);
     }
   }
 
   async function getAPIkey() {
-      // Get api key
-      const docRef = doc(db, 'api-keys', 'openai-api-key')
-      const docSnap = await getDoc(docRef)
-      const key = docSnap.data()
-    const openaiKey = key.key
-    console.log(openaiKey)
-      
+          
   }
 
 
@@ -100,7 +115,7 @@ function App() {
         value={userInput}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
       <button className='btn btn-primary my-6'
-        onClick={getAPIkey}>get recipe</button> 
+        onClick={getRecipe}>get recipe</button> 
       <div className=''>
         <div className='text-2xl font-bold my-3'>{dishName}</div>
         <div className='text-lg font-semibold my-3'>ingredients</div>
