@@ -38,27 +38,33 @@ const recipeResponse = {
 
 
 function App() {
-  const [recipe, setRecipe] = useState(recipeResponse)
+  const [recipe, setRecipe] = useState({})
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   
 
-  
-  const dishName = recipe['dish']
-  const ingredients = recipe['ingredients'].map(each => {
-    return (
-      <li
-        className='text-sm cursor-pointer hover:opacity-60'
-        key={each}
-        onClick={() => { selectIngredient(each) }}>{each}</li>
-    )
-  })
-  const instructions = recipe['instructions'].map((each, index) => {
-    return (
-      <li className='text-sm list-none' key={each}>{index + 1}. {each}</li>
-    )
-  })
+  let dishName = ""
+  let ingredients = []
+  let instructions = []
+
+  if (recipe && recipe['dish'] && recipe['ingredients']) {
+    dishName = recipe['dish']
+    console.log(dishName)
+    ingredients = recipe['ingredients'].map(each => {
+      return (
+        <li
+          className='text-sm cursor-pointer hover:opacity-60'
+          key={each}
+          onClick={() => { selectIngredient(each) }}>{each}</li>
+      )
+    })
+    instructions = recipe['instructions'].map((each, index) => {
+      return (
+        <li className='text-sm list-none' key={each}>{index + 1}. {each}</li>
+      )
+    })
+  }
   
   function togglePopup() {
     setPopup(!popup)
@@ -69,37 +75,46 @@ function App() {
     togglePopup()
   }
 
-  async function getRecipe (e) {
+  function getRecipe(e) {
     e.preventDefault();
-    console.log("getting recipe...")
-    try {
-      // Get api key
-      const docRef = doc(db, 'api-keys', 'openai-api-key')
-      const docSnap = await getDoc(docRef)
-      const key = docSnap.data()
-      const openaiKey = key.key  
+    console.log("getting recipe...");
 
-      const configuration = new Configuration({
-        apiKey: openaiKey,
-        headers: {
-            "User-Agent": "skiptorecipe"
-        }
-    });         
-    const openai = new OpenAIApi(configuration);
-    const prompt = `return a recipe for ${userInput}`;
-    const completion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: prompt }],
-        });
-    
-    
-      const generatedText = completion.data.choices[0].message.content;
-      console.log(generatedText);
-      // update recipe
+    // Get api key
+    const docRef = doc(db, "api-keys", "openai-api-key");
+    getDoc(docRef)
+      .then((docSnap) => {
+        const key = docSnap.data();
+        const openaiKey = key.key;
 
-    } catch (e) {
-      console.error("Error adding document: ", e);
-    }
+        const configuration = new Configuration({
+          apiKey: openaiKey,
+        });         
+
+        const openai = new OpenAIApi(configuration);
+        const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": ["", "", ""],
+        "instructions": ["", "", ""]}`;
+
+        openai.createChatCompletion({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: prompt }],
+        })
+          .then((completion) => {
+            const generatedText =
+              completion.data.choices[0].message.content;
+
+            console.log(completion);  
+            console.log(generatedText);
+            setRecipe(JSON.parse(generatedText));
+          })
+          .catch((error) => {
+            console.log(error);
+            setRecipe("");
+          });
+      })
+      .catch((error) => {
+        console.log(error);
+        setRecipe("");
+      });
   }
 
   async function getAPIkey() {
@@ -116,13 +131,13 @@ function App() {
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
       <button className='btn btn-primary my-6'
         onClick={getRecipe}>get recipe</button> 
-      <div className=''>
+      {instructions.length > 1 && <div className=''>
         <div className='text-2xl font-bold my-3'>{dishName}</div>
         <div className='text-lg font-semibold my-3'>ingredients</div>
         <div className='flex flex-col items-start'>{ingredients}</div>
         <div className='text-lg font-semibold my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
-      </div>
+      </div>}
       {popup && 
         <div className='outline bg-white w-80 h-72 absolute top-56 flex flex-col items-center justify-around'>
           <div className='text-sm'>{selectedIngredient}</div>
