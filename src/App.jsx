@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-
+// import { openaiKey } from '../firebase'
+import { db } from '../firebase'
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 
 
 const recipeResponse = {
@@ -36,9 +38,9 @@ const recipeResponse = {
 
 function App() {
   const [recipe, setRecipe] = useState(recipeResponse)
-  const [popup, setPopup] = useState(true)
-  const [selectedIngredient, setSelectedIngredient] = useState("d")
-
+  const [popup, setPopup] = useState(false)
+  const [selectedIngredient, setSelectedIngredient] = useState("")
+  const [userInput, setUserInput] = useState("")
   
 
   
@@ -66,10 +68,39 @@ function App() {
     togglePopup()
   }
 
+  async function getRecipe (e) {
+    e.preventDefault();
+
+    try {
+      const docRef = await addDoc(collection(db, "user-inputs"), {
+        recipe: userInput,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+  }
+
+  async function getAPIkey() {
+      // Get api key
+      const docRef = doc(db, 'api-keys', 'openai-api-key')
+      const docSnap = await getDoc(docRef)
+      const key = docSnap.data()
+    const openaiKey = key.key
+    console.log(openaiKey)
+      
+  }
+
+
   return (
     <div className='flex flex-col items-center'>
-      <input type="text" className='input input-bordered max-w-xs'/>
-      <button className='btn btn-primary my-6'>get recipe</button> 
+      <input
+        type="text"
+        className='input input-bordered max-w-xs'
+        value={userInput}
+        onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
+      <button className='btn btn-primary my-6'
+        onClick={getAPIkey}>get recipe</button> 
       <div className=''>
         <div className='text-2xl font-bold my-3'>{dishName}</div>
         <div className='text-lg font-semibold my-3'>ingredients</div>

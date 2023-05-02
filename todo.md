@@ -1,0 +1,3 @@
+- connect firebase to store openai api key
+- configure firebase
+-
