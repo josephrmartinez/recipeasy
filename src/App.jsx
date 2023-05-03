@@ -5,9 +5,8 @@ import { db } from '../firebase'
 import { collection, addDoc, doc, getDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
 
-
-
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
+
 
 function App() {
   const [recipe, setRecipe] = useState({})
@@ -25,18 +24,17 @@ function App() {
     ingredients = recipe['ingredients'].map(each => {
       return (
         <li
-          className='text-sm cursor-pointer hover:opacity-60'
+          className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
           key={each}
           onClick={() => { selectIngredient(each) }}>{each}</li>
       )
     })
     instructions = recipe['instructions'].map((each, index) => {
       return (
-        <li className='text-sm list-none' key={each}>{index + 1}. {each}</li>
+        <li className='text-sm list-none mb-1' key={each}><span className='font-bold'>{index + 1}. </span>{each}</li>
       )
     })
   }
-  
   
   function checkForSubmit(event) {
     if (userInput.trim().length < 3) return;
@@ -46,7 +44,6 @@ function App() {
     }
   }
   
-
   function togglePopup() {
     setPopup(!popup)
   }
@@ -109,17 +106,24 @@ function App() {
         </div>
         }
       {instructions.length > 1 && <div className=''>
-        <div className='text-2xl font-bold my-3'>{dishName}</div>
-        <div className='text-lg font-semibold my-3'>ingredients</div>
+        <div className='text-3xl font-bold my-3'>{dishName}</div>
+        <div className='flex flex-row justify-around my-8'>
+          <button className='btn btn-outline'>enhance</button>
+          <button className='btn btn-outline'>a la dean</button>
+          <button className='btn btn-outline'>healthy</button>
+        </div>
+        
+        <div className='text-lg font-bold tracking-wide my-3'>ingredients</div>
         <div className='flex flex-col items-start'>{ingredients}</div>
-        <div className='text-lg font-semibold my-3'>instructions</div>
+        <div className='text-lg font-bold tracking-wide my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
+        <button className='btn btn-outline mt-16'>save recipe</button>
       </div>}
       {popup && 
         <div className='outline bg-white w-80 h-72 absolute top-56 flex flex-col items-center justify-around'>
           <div className='text-sm'>{selectedIngredient}</div>
           <button className='btn btn-outline w-48'>substitute</button>
-          <button className='btn btn-outline w-48'>make without</button>
+          
           <button className='btn btn-outline w-48' onClick={togglePopup}>cancel</button>
         </div>}
     </div>
