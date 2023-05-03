@@ -117,15 +117,16 @@ function App() {
         <div className='flex flex-col items-start'>{ingredients}</div>
         <div className='text-lg font-bold tracking-wide my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
-        <button className='btn btn-outline mt-16'>save recipe</button>
+        <button className='btn btn-ghost mt-16'>+ save recipe</button>
       </div>}
       {popup && 
-        <div className='outline bg-white w-80 h-72 absolute top-56 flex flex-col items-center justify-around'>
-          <div className='text-sm'>{selectedIngredient}</div>
-          <button className='btn btn-outline w-48'>substitute</button>
+        <div className='bg-white rounded-lg w-80 h-72 absolute top-56 flex flex-col items-center'>
+          <div className='text-lg font-bold my-16'>{selectedIngredient}</div>
+        
+          <button className='btn btn-primary w-48 mb-4'>substitute</button>
+          <button className='btn btn-ghost w-48' onClick={togglePopup}>cancel</button>
           
-          <button className='btn btn-outline w-48' onClick={togglePopup}>cancel</button>
-        </div>}
+          </div>}
     </div>
   )
 }
