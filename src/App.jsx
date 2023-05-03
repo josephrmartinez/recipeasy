@@ -147,6 +147,35 @@ function App() {
       });
   }
 
+  function getDeanRecipe() {
+    setLoading(true);
+
+    // Submit prompt to openAI API
+    const prompt = `Rewrite this recipe in the style of Paula Dean: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
+    "instructions": [array of strings]}`;
+
+    openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    })
+      .then((completion) => {
+        // Handle API response
+        const generatedText =
+          completion.data.choices[0].message.content;
+
+        console.log(completion);  
+        console.log(generatedText);
+        setLoading(false)
+        setRecipe(JSON.parse(generatedText));
+        setUserInput("")
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false)
+        setRecipe("");
+      });
+  }
+
 
   return (
     <div className='flex flex-col items-center'>
@@ -170,9 +199,9 @@ function App() {
       {instructions.length > 1 && <div className=''>
         <div className='text-3xl font-bold my-3'>{dishName}</div>
         <div className='flex flex-row justify-around my-8'>
-          <button className='btn btn-outline'>enhance</button>
-          <button className='btn btn-outline'>a la dean</button>
-          <button className='btn btn-outline'>healthy</button>
+          <button className='btn btn-outline' onClick={enhanceRecipe}>enhance</button>
+          <button className='btn btn-outline' onClick={getDeanRecipe}>a la dean</button>
+          <button className='btn btn-outline' onClick={getHealthyRecipe}>healthy</button>
         </div>
         
         <div className='text-lg font-bold tracking-wide my-3'>ingredients</div>
