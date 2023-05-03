@@ -93,7 +93,36 @@ function App() {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const prompt = `make a variation of this recipe: ${JSON.stringify(recipe)}. Substitute ${selectIngredient} with something else. Format response as: {"dish": ${userInput}, "ingredients": [array of strings],
+    const prompt = `Substitute ${selectIngredient} with something else in this recipe: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
+    "instructions": [array of strings]}`;
+
+    openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    })
+      .then((completion) => {
+        // Handle API response
+        const generatedText =
+          completion.data.choices[0].message.content;
+
+        console.log(completion);  
+        console.log(generatedText);
+        setLoading(false)
+        setRecipe(JSON.parse(generatedText));
+        setUserInput("")
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false)
+        setRecipe("");
+      });
+  }
+
+  function enhanceRecipe() {
+    setLoading(true);
+
+    // Submit prompt to openAI API
+    const prompt = `Enhance this recipe to make it more interesting and flavorful: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
     "instructions": [array of strings]}`;
 
     openai.createChatCompletion({
