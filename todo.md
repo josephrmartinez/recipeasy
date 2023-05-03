@@ -2,12 +2,9 @@ Clear userInput upon submit of getRecipe
 
 Implement functions:
 
-- substitute
 - enhance
 - a la dean
 - healthy
-
-Design popup window
 
 Align ingredients with instructions
 

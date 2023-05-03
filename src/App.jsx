@@ -15,6 +15,13 @@ function App() {
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
 
+  // openAI configuration object
+  const configuration = new Configuration({
+      apiKey: apiKey,
+    });         
+  const openai = new OpenAIApi(configuration);
+
+
   let dishName = ""
   let ingredients = []
   let instructions = []
@@ -57,10 +64,6 @@ function App() {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const configuration = new Configuration({
-      apiKey: apiKey,
-    });         
-    const openai = new OpenAIApi(configuration);
     const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": [array of strings],
     "instructions": [array of strings]}`;
 
@@ -77,6 +80,36 @@ function App() {
         console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
+        setUserInput("")
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false)
+        setRecipe("");
+      });
+  }
+
+  function getRecipeWithSubstitute() {
+    setLoading(true);
+
+    // Submit prompt to openAI API
+    const prompt = `make a variation of this recipe: ${JSON.stringify(recipe)}. Substitute ${selectIngredient} with something else. Format response as: {"dish": ${userInput}, "ingredients": [array of strings],
+    "instructions": [array of strings]}`;
+
+    openai.createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [{ role: "user", content: prompt }],
+    })
+      .then((completion) => {
+        // Handle API response
+        const generatedText =
+          completion.data.choices[0].message.content;
+
+        console.log(completion);  
+        console.log(generatedText);
+        setLoading(false)
+        setRecipe(JSON.parse(generatedText));
+        setUserInput("")
       })
       .catch((error) => {
         console.log(error);
@@ -123,7 +156,7 @@ function App() {
         <div className='bg-white rounded-lg w-80 h-72 absolute top-56 flex flex-col items-center'>
           <div className='text-lg font-bold my-16'>{selectedIngredient}</div>
         
-          <button className='btn btn-primary w-48 mb-4'>substitute</button>
+          <button className='btn btn-primary w-48 mb-4' onClick={getRecipeWithSubstitute}>substitute</button>
           <button className='btn btn-ghost w-48' onClick={togglePopup}>cancel</button>
           
           </div>}
