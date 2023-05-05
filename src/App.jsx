@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import './App.css'
 import { db } from '../firebase'
-import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { collection, addDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
@@ -205,6 +205,19 @@ function App() {
       });
   }
 
+  async function saveRecipe(e) {
+  // Store recipe to firebase
+    try {
+      const docRef = await addDoc(collection(db, "recipes"), {
+        recipe: recipe,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    }
+      catch (e) {
+            console.error("Error adding document: ", e);
+          }
+  }
+  
 
   return (
     <div className='flex flex-col items-center'>
@@ -255,9 +268,3 @@ export default App
 
 
 
-// Get api key from firebase
-    // const docRef = doc(db, "api-keys", "openai-api-key");
-    // getDoc(docRef)
-    //   .then((docSnap) => {
-    //     const key = docSnap.data();
-    //     const openaiKey = key.key;

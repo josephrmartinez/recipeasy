@@ -1,16 +1,6 @@
-Clear userInput upon submit of getRecipe
-
-Implement functions:
-
-- enhance
-- a la dean
-- healthy
-
-Align ingredients with instructions
-
-/////
-
 Implement "save recipe"
+
+- change button text to "recipe saved"
 
 Add menu icon to upper right:
 
