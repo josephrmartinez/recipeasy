@@ -147,35 +147,6 @@ function App() {
       });
   }
 
-  function getDeanRecipe() {
-    setLoading(true);
-
-    // Submit prompt to openAI API
-    const prompt = `Rewrite this recipe in the style of Paula Dean: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
-    "instructions": [array of strings]}`;
-
-    openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-    })
-      .then((completion) => {
-        // Handle API response
-        const generatedText =
-          completion.data.choices[0].message.content;
-
-        console.log(completion);  
-        console.log(generatedText);
-        setLoading(false)
-        setRecipe(JSON.parse(generatedText));
-        setUserInput("")
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false)
-        setRecipe("");
-      });
-  }
-
   function getHealthyRecipe() {
     setLoading(true);
 
@@ -221,14 +192,15 @@ function App() {
 
   return (
     <div className='flex flex-col items-center'>
-      <input
+      <div className='flex flex-row'><input
         type="text"
         className='input input-bordered max-w-xs'
         value={userInput}
         onKeyDown={checkForSubmit}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
-      <button className='btn btn-primary my-6'
-        onClick={getRecipe}>get recipe</button> 
+      <button className='btn btn-primary ml-4'
+        onClick={getRecipe}>get recipe</button> </div>
+      
       {loading && 
         <div role="status">
         <svg aria-hidden="true" className="w-8 h-8 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-slate-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -237,20 +209,24 @@ function App() {
         </svg>
         <span className="sr-only">Loading...</span>
         </div>
-        }
-      {instructions.length > 1 && <div className=''>
-        <div className='text-3xl font-bold my-3'>{dishName}</div>
-        <div className='flex flex-row justify-around my-8'>
-          <button className='btn btn-outline' onClick={enhanceRecipe}>enhance</button>
-          <button className='btn btn-outline' onClick={getDeanRecipe}>a la dean</button>
-          <button className='btn btn-outline' onClick={getHealthyRecipe}>healthy</button>
+      }
+      {!loading && 
+      <div className='w-8 h-8'></div>}
+      {instructions.length > 1 && <div className='max-w-lg'>
+        <div className='text-3xl font-bold mt-3 mb-6'>{dishName}</div>
+        
+        <div className='flex flex-row justify-around my-8 mx-auto max-w-lg'>
+          <button className='btn btn-ghost text-neutral-600' onClick={enhanceRecipe}>enhance</button>
+          <button className='btn btn-ghost text-neutral-600' onClick={getHealthyRecipe}>make healthy</button>
+          <button className='btn btn-ghost text-neutral-600'>save recipe</button>
         </div>
         
         <div className='text-lg font-bold tracking-wide my-3'>ingredients</div>
         <div className='flex flex-col items-start'>{ingredients}</div>
         <div className='text-lg font-bold tracking-wide my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
-        <button className='btn btn-ghost mt-16'>+ save recipe</button>
+        
+        
       </div>}
       {popup && 
         <div className='bg-white rounded-lg w-80 h-72 absolute top-56 flex flex-col items-center'>
