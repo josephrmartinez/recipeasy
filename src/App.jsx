@@ -193,13 +193,14 @@ function App() {
 
   return (
     <div className='flex flex-col items-center'>
-      <div className='flex flex-row'><input
+      <div className='flex flex-row mx-auto max-w-xs'>
+        <input
         type="text"
         className='input input-bordered max-w-xs'
         value={userInput}
         onKeyDown={checkForSubmit}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
-      <button className='btn btn-primary ml-4'
+      <button className='btn btn-primary ml-4 pr-6'
         onClick={getRecipe}>get recipe</button> </div>
       
       {loading && 
@@ -218,7 +219,7 @@ function App() {
         
      
 
-        <div className='flex flex-row justify-around my-8 mx-auto max-w-lg'>
+        <div className='flex flex-row justify-around my-8 mx-auto max-w-xs'>
           <button className='btn btn-ghost text-neutral-600' onClick={enhanceRecipe}><span className='mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>
           <button className='btn btn-ghost text-neutral-600' onClick={getHealthyRecipe}><span className='mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>
           <button className='btn btn-ghost text-neutral-600'><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>
