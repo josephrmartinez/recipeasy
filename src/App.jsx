@@ -200,14 +200,14 @@ function App() {
 
   return (
     <div className='flex flex-col items-center '>
-      <div className='flex flex-row mx-auto max-w-xs'>
+      <div className='flex flex-row mx-auto w-fit'>
         <input
         type="text"
-        className='input input-bordered max-w-xs'
+        className='input input-bordered w-36 sm:w-48'
         value={userInput}
         onKeyDown={checkForSubmit}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
-      <button className='btn btn-primary ml-4 pr-6'
+      <button className='btn btn-primary ml-4'
         onClick={getRecipe}>get recipe</button> </div>
       
       {loading && 
@@ -222,16 +222,14 @@ function App() {
       {!loading && 
       <div className='w-8 h-12'></div>}
       {instructions.length > 1 && <div className='max-w-lg'>
-        <div className='text-3xl font-bold mt-3 mb-6'>{dishName}</div>
-        
-     
-
-        <div className='flex flex-row justify-around my-8 mx-auto max-w-xs'>
-          <button className='btn btn-ghost text-neutral-600' onClick={enhanceRecipe}><span className='mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>
-          <button className='btn btn-ghost text-neutral-600' onClick={getHealthyRecipe}><span className='mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>
+        <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+    
+        <div className='flex flex-col w-48 sm:flex-row sm:w-auto justify-around my-8 mx-auto'>
+          <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={enhanceRecipe}><span className='mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>
+          <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={getHealthyRecipe}><span className='mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>
           {recipeSaved ?
-            <button className='btn btn-ghost no-animation text-neutral-600'><span className='mr-3'><FloppyDiskBack size={26} weight='light' /></span>recipe saved</button>
-            : <button className='btn btn-ghost text-neutral-600' onClick={saveRecipe}><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>
+            <button className='btn btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='mr-3'><FloppyDiskBack size={26} weight='light' /></span>recipe saved</button>
+            : <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={saveRecipe}><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>
           }
           </div>
         
@@ -243,8 +241,8 @@ function App() {
         
       </div>}
       {popup && 
-        <div className='bg-white shadow-md rounded-lg w-80 h-72 absolute top-52 flex flex-col items-center'>
-          <div className='text-lg font-bold my-16'>{selectedIngredient}</div>
+        <div className='bg-white shadow-md rounded-lg w-72 sm:w-80 h-72 absolute top-52 flex flex-col items-center'>
+          <div className='text-lg font-bold my-12 sm:my-16'>{selectedIngredient}</div>
         
           <button className='btn btn-primary w-48 mb-4' onClick={getRecipeWithSubstitute}>substitute</button>
           <button className='btn btn-ghost w-48' onClick={togglePopup}>cancel</button>
