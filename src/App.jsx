@@ -4,7 +4,7 @@ import './App.css'
 import { db } from '../firebase'
 import { collection, addDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
-import { FloppyDisk, HandsClapping, Carrot } from "@phosphor-icons/react";
+import { FloppyDisk, FloppyDiskBack, HandsClapping, Carrot } from "@phosphor-icons/react";
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -15,6 +15,7 @@ function App() {
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
+  const [recipeSaved, setRecipeSaved] = useState(false)
 
   // openAI configuration object
   const configuration = new Configuration({
@@ -182,8 +183,10 @@ function App() {
     try {
       const docRef = await addDoc(collection(db, "recipes"), {
         recipe: recipe,
+        date: new Date()
       });
       console.log("Document written with ID: ", docRef.id);
+      setRecipeSaved(true)
     }
       catch (e) {
             console.error("Error adding document: ", e);
@@ -222,8 +225,11 @@ function App() {
         <div className='flex flex-row justify-around my-8 mx-auto max-w-xs'>
           <button className='btn btn-ghost text-neutral-600' onClick={enhanceRecipe}><span className='mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>
           <button className='btn btn-ghost text-neutral-600' onClick={getHealthyRecipe}><span className='mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>
-          <button className='btn btn-ghost text-neutral-600'><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>
-        </div>
+          {recipeSaved ?
+            <button className='btn btn-ghost no-animation text-neutral-600'><span className='mr-3'><FloppyDiskBack size={26} weight='light' /></span>recipe saved</button>
+            : <button className='btn btn-ghost text-neutral-600' onClick={saveRecipe}><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>
+          }
+          </div>
         
         <div className='text-lg font-bold tracking-wide my-3'>ingredients</div>
         <div className='flex flex-col items-start'>{ingredients}</div>
