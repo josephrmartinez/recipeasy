@@ -11,7 +11,7 @@ const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 function App() {
   const [recipe, setRecipe] = useState({})
-  const [popup, setPopup] = useState(true)
+  const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
