@@ -9,7 +9,14 @@ export default {
   },
   plugins: [require("daisyui")],
   daisyui: {
-    themes: false
+    themes: [
+      {
+        light: {
+        ...require("daisyui/src/colors/themes")["[data-theme=light]"],
+          primary: "#2D6645",
+          "primary-focus": "#285b3e",
+      }}
+    ]
   }
 }
 
