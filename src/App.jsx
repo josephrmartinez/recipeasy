@@ -11,7 +11,7 @@ const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 function App() {
   const [recipe, setRecipe] = useState({})
-  const [popup, setPopup] = useState(false)
+  const [popup, setPopup] = useState(true)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -82,6 +82,7 @@ function App() {
         console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
+        setRecipeSaved(false)
         setUserInput("")
       })
       .catch((error) => {
@@ -93,9 +94,9 @@ function App() {
 
   function getRecipeWithSubstitute() {
     setLoading(true);
-
+    setPopup(false)
     // Submit prompt to openAI API
-    const prompt = `Substitute ${selectIngredient} with something else in this recipe: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
+    const prompt = `Generate another version of this recipe but substitute the ${selectedIngredient} with something else: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
     "instructions": [array of strings]}`;
 
     openai.createChatCompletion({
@@ -111,6 +112,7 @@ function App() {
         console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
+        setRecipeSaved(false)
         setUserInput("")
       })
       .catch((error) => {
@@ -140,6 +142,7 @@ function App() {
         console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
+        setRecipeSaved(false)
         setUserInput("")
       })
       .catch((error) => {
@@ -169,6 +172,7 @@ function App() {
         console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
+        setRecipeSaved(false)
         setUserInput("")
       })
       .catch((error) => {
@@ -195,7 +199,7 @@ function App() {
   
 
   return (
-    <div className='flex flex-col items-center'>
+    <div className='flex flex-col items-center '>
       <div className='flex flex-row mx-auto max-w-xs'>
         <input
         type="text"
@@ -239,7 +243,7 @@ function App() {
         
       </div>}
       {popup && 
-        <div className='bg-white rounded-lg w-80 h-72 absolute top-56 flex flex-col items-center'>
+        <div className='bg-white shadow-md rounded-lg w-80 h-72 absolute top-52 flex flex-col items-center'>
           <div className='text-lg font-bold my-16'>{selectedIngredient}</div>
         
           <button className='btn btn-primary w-48 mb-4' onClick={getRecipeWithSubstitute}>substitute</button>

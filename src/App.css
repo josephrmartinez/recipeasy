@@ -3,5 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  height: 100%;
+  background-color: rgb(247, 247, 247);
 }
 
