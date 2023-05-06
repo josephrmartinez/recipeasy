@@ -14,7 +14,7 @@ function App() {
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [recipeSaved, setRecipeSaved] = useState(false)
 
   // openAI configuration object

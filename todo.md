@@ -18,7 +18,4 @@ Add menu icon to upper right:
 
 Styling:
 
-- Update widths so that site does not break on small screen sizes
-- Update width of get recipe button
-- Update loading icon so that it is visible in dark more
 - Update primary color to dark green
