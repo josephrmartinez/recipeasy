@@ -18,4 +18,4 @@ Add menu icon to upper right:
 
 Styling:
 
-- Update primary color to dark green
+- Conditionally render icons after clicked: e.g. enhance -> enhanced
