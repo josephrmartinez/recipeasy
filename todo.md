@@ -19,5 +19,4 @@ Add menu icon to upper right:
 Styling:
 
 - Customize cubic bezier on animate pulse
-- Conditionally render enhance icon after click. OnClick reverses to previous state
-- Conditionally render "make heathy" icon after click. OnClick reverses to previous state
+- How to handle reversing to previous state for enhance and make heealthy? Need to keep track: can only undo the precise transformation that was just done.

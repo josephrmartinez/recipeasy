@@ -266,16 +266,16 @@ function App() {
         <div className='max-w-lg'>
         <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
     
-        <div className='flex flex-col w-48 sm:flex-row sm:w-auto justify-around my-8 mx-auto'>
+        <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
-              <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setEnhanced(false)}><span className='mr-3'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</button>
-              : <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={enhanceRecipe}><span className='mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>}
+              <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setEnhanced(false)}><span className='sm:mr-3'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</button>
+              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={enhanceRecipe}><span className='sm:mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
-              <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setHealthy(false)}><span className='mr-3'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</button>
-              : <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={getHealthyRecipe}><span className='mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>}
+              <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setHealthy(false)}><span className='sm:mr-3'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</button>
+              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={getHealthyRecipe}><span className='sm:mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>}
             {recipeSaved ?
-              <button className='btn btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='mr-3'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</button>
-              : <button className='btn btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={saveRecipe}><span className='mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
+              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</button>
+              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={saveRecipe}><span className='sm:mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
