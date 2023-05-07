@@ -18,4 +18,6 @@ Add menu icon to upper right:
 
 Styling:
 
-- Conditionally render icons after clicked: e.g. enhance -> enhanced
+- Customize cubic bezier on animate pulse
+- Conditionally render enhance icon after click. OnClick reverses to previous state
+- Conditionally render "make heathy" icon after click. OnClick reverses to previous state
