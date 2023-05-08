@@ -25,7 +25,7 @@ const sample = {"dish": "fries",
 }
 
 function App() {
-  const [recipe, setRecipe] = useState({})
+  const [recipe, setRecipe] = useState(sample)
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
@@ -34,6 +34,7 @@ function App() {
   const [enhanced, setEnhanced] = useState(false)
   const [healthy, setHealthy] = useState(false)
   const [recipeSaved, setRecipeSaved] = useState(false)
+  const [selectActive, setSelectActive] = useState(false)
 
   const loadingStatements = [
   "Searching for the recipe online...",
@@ -70,10 +71,14 @@ function App() {
     dishName = recipe['dish']
     ingredients = recipe['ingredients'].map(each => {
       return (
-        <li
+        <div className='flex flex-row items-baseline'>
+          {selectActive && <input type="checkbox" className='mr-2' />}
+          <li
           className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
           key={each}
           onClick={() => { selectIngredient(each) }}>{each}</li>
+        </div>
+        
       )
     })
     instructions = recipe['instructions'].map((each, index) => {
@@ -235,6 +240,9 @@ function App() {
           }
   }
   
+  function handleTrelloClick() {
+    setSelectActive(!selectActive)
+  }
 
   return (
     <div className='flex flex-col items-center '>
@@ -280,7 +288,11 @@ function App() {
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
         <div className='flex flex-col items-start text-left'>{ingredients}</div>
-        <button className='btn btn-outline'>add to trello</button>  
+        <div className='w-full flex items-start mb-8'>
+            <button
+              className='btn btn-ghost text-xs'
+              onClick={handleTrelloClick}>add items to trello<span className='ml-2'>&#8594;</span></button>  
+        </div>
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
         

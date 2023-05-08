@@ -19,4 +19,5 @@ Add menu icon to upper right:
 Styling:
 
 - Customize cubic bezier on animate pulse
+- Bug fix: try animate pulse to new item load
 - How to handle reversing to previous state for enhance and make heealthy? Need to keep track: can only undo the precise transformation that was just done.
