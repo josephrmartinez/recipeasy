@@ -25,15 +25,15 @@ const sample = {"dish": "fries",
 }
 
 function App() {
-  const [recipe, setRecipe] = useState(sample)
+  const [recipe, setRecipe] = useState({})
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
   const [loadingIndex, setLoadingIndex] = useState(0);
-  const [enhanced, setEnhanced] = useState(true)
-  const [healthy, setHealthy] = useState(true)
-  const [recipeSaved, setRecipeSaved] = useState(true)
+  const [enhanced, setEnhanced] = useState(false)
+  const [healthy, setHealthy] = useState(false)
+  const [recipeSaved, setRecipeSaved] = useState(false)
 
   const loadingStatements = [
   "Searching for the recipe online...",
@@ -268,10 +268,10 @@ function App() {
     
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
-              <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setEnhanced(false)}><span className='sm:mr-3'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</button>
+              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</button>
               : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={enhanceRecipe}><span className='sm:mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
-              <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={()=>setHealthy(false)}><span className='sm:mr-3'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</button>
+              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</button>
               : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={getHealthyRecipe}><span className='sm:mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>}
             {recipeSaved ?
               <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</button>
@@ -279,7 +279,7 @@ function App() {
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
-        <div className='flex flex-col items-start'>{ingredients}</div>
+        <div className='flex flex-col items-start text-left'>{ingredients}</div>
         <button className='btn btn-outline'>add to trello</button>  
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
