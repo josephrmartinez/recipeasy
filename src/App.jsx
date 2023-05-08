@@ -280,6 +280,7 @@ function App() {
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
         <div className='flex flex-col items-start'>{ingredients}</div>
+        <button className='btn btn-outline'>add to trello</button>  
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
         
