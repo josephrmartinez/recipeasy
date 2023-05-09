@@ -7,7 +7,8 @@ Build out "my recipes" page
 Implement add to trello functionality
 
 - On first click: check boxes appear
-- User selects items
+- Customizing check boxes and passing state to each: https://blog.logrocket.com/building-custom-checkbox-react/
+- User selects items (in this mode, disable the popup box functionality)
 - On second click, selected items are added to trello
 
 Add menu icon to upper right:
