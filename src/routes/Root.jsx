@@ -1,5 +1,5 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { List, X } from "@phosphor-icons/react";
+import { List, X, Hamburger } from "@phosphor-icons/react";
 import { useState } from 'react'
 
 
@@ -20,9 +20,9 @@ export default function Root() {
                 className="mr-0 ml-auto mb-6 cursor-pointer"
                     onClick={toggleMenu} />
                 :
-                <List
+                <Hamburger
                 size={32}
-                weight="bold"
+                weight="regular"
                 className="mr-0 ml-auto mb-6 cursor-pointer"
                 onClick={toggleMenu} />
             }

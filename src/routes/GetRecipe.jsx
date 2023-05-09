@@ -25,7 +25,7 @@ const sample = {"dish": "fries",
 }
 
 export default function GetRecipe() {
-  const [recipe, setRecipe] = useState(sample)
+    const [recipe, setRecipe] = useState({})
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
