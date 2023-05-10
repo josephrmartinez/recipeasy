@@ -5,6 +5,7 @@ import { db } from '../../firebase';
 import { collection, addDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
 import { FloppyDisk, FloppyDiskBack, HandsClapping, Carrot } from "@phosphor-icons/react";
+import { useLocation } from 'react-router-dom';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -25,7 +26,7 @@ const sample = {"dish": "fries",
 }
 
 export default function GetRecipe() {
-    const [recipe, setRecipe] = useState({})
+  const [recipe, setRecipe] = useState({})
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
@@ -36,6 +37,13 @@ export default function GetRecipe() {
   const [recipeSaved, setRecipeSaved] = useState(false)
   const [selectActive, setSelectActive] = useState(false)
 
+    let location = useLocation();
+
+    useEffect(() => {
+        setRecipe(location.state.recipe);
+    }, [location]);
+    
+    
   const loadingStatements = [
   "Searching for the recipe online...",
   "Sifting through all the SEO content...",
@@ -44,8 +52,9 @@ export default function GetRecipe() {
   "Skimming through the stories...",
   "Closing a video...",
   "Skipping over a banner ad...",
-  // Add as many statements as you like
 ];
+
+    
 
   // a useEffect hook that updates the loadingIndex state variable every two seconds, causing the loading statements to change:
   useEffect(() => {
@@ -243,6 +252,8 @@ export default function GetRecipe() {
   function handleTrelloClick() {
     setSelectActive(!selectActive)
   }
+    
+    
 
   return (
     <div className='flex flex-col items-center '>

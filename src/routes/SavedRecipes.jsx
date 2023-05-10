@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db } from '../../firebase';
 import { collection, getDocs } from "firebase/firestore";
+import { Link } from 'react-router-dom';
 
 
 export default function SavedRecipes() {
@@ -28,7 +29,14 @@ export default function SavedRecipes() {
 
     const recipeList = recipes.map(each => {
         return (
-            <div className='h-10' key={each['recipe']['dish']}>{each['recipe']['dish']}</div>
+            <li
+                className='mb-6 text-left max-w-md mx-auto cursor-pointer text-gray-700 hover:text-orange-700 duration-200'
+                key={each['recipe']['dish']}
+                onClick={()=>console.log(each['recipe'])}>
+                <Link to={'/'}
+                    state={{ recipe: each['recipe'] }}
+                >{each['recipe']['dish']}</Link>
+            </li>
         )
     })
 
@@ -37,7 +45,7 @@ export default function SavedRecipes() {
     return (
         <>
             <div className='text-xl mb-6 font-semibold'>saved recipes</div>
-            <div>{recipeList}</div>
+            <ul>{recipeList}</ul>
         </>
         
     )

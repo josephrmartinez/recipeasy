@@ -48,28 +48,6 @@ export default function Root() {
                 </div>}
         <div><Outlet /></div>
             
-
-        
-            
-            
         </>
     )
 }
-
-{/* <div className="flex flex-row w-full absolute justify-around bottom-0 bg-[#F7F7F7]">
-            <NavLink
-                to={`/`}
-                    end
-                className={({ isActive }) =>
-              isActive
-                ? "flex flex-col items-center justify-evenly rounded-full stroke-amber-500 text-gray-700"
-                : "flex flex-col items-center justify-evenly rounded-full stroke-gray-500 text-gray-500"}>
-                <div>get recipe</div>
-            </NavLink> 
-            <NavLink
-                to={`/saved`}
-                end>
-                <div>saved recipes</div>
-            </NavLink> 
-            
-        </div> */}
