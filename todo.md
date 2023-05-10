@@ -1,25 +1,22 @@
-Build out "my recipes" page
+general
 
-- Load content from firestore
+- add "healthy" "enhanced" and "saved" to object schema
+- edit prompts to prohibit any response with text outside of curly braces.
+
+"saved recipes" page
+
 - Enable delete functionality
-- Enable review recipe functionality (load to main page)
+- Style page
 
 Implement add to trello functionality
 
-- On first click: check boxes appear
+- Make default styling that check boxes appear with li items. Vertical center, space further from text
 - Customizing check boxes and passing state to each: https://blog.logrocket.com/building-custom-checkbox-react/
-- User selects items (in this mode, disable the popup box functionality)
-- On second click, selected items are added to trello
-
-Add menu icon to upper right:
-
-- My recipes
-- Login / log out
-- Create account
+- On trello button click, selected items are added to trello
 
 Styling:
 
-- Bug fix: try animate pulse to new item load
+- Bug fix: sync animate pulse to new item load
 - Customize cubic bezier on animate pulse
-- How to handle reversing to previous state for enhance and make healthy? Need to keep track: can only undo the precise transformation that was just done.
+- Disable reversing enhance and healthy
 - Prevent appearance of vertical scroll from pushing content left. This is only happening on the top content boxes
