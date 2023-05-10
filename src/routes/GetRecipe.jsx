@@ -37,10 +37,11 @@ export default function GetRecipe() {
   const [recipeSaved, setRecipeSaved] = useState(false)
   const [selectActive, setSelectActive] = useState(false)
 
-    let location = useLocation();
+    const location = useLocation();
+    const displayRecipe = location.state ? location.state.recipe : {}
 
     useEffect(() => {
-        setRecipe(location.state.recipe);
+        setRecipe(displayRecipe);
     }, [location]);
     
     
