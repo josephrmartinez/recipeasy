@@ -30,16 +30,17 @@ export default function GetRecipe() {
     const location = useLocation();
     const displayRecipe = location.state ? location.state.recipe : {}
 
-  const [recipe, setRecipe] = useState(displayRecipe)
-  const [popup, setPopup] = useState(false)
-  const [selectedIngredient, setSelectedIngredient] = useState("")
-  const [userInput, setUserInput] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [loadingIndex, setLoadingIndex] = useState(0);
-  const [enhanced, setEnhanced] = useState(false)
-  const [healthy, setHealthy] = useState(false)
-  const [recipeSaved, setRecipeSaved] = useState(false)
-  const [selectActive, setSelectActive] = useState(false)
+    const [recipe, setRecipe] = useState(displayRecipe)
+    const [popup, setPopup] = useState(false)
+    const [selectedIngredient, setSelectedIngredient] = useState("")
+    const [userInput, setUserInput] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [loadingIndex, setLoadingIndex] = useState(0);
+    const [enhanced, setEnhanced] = useState(false)
+    const [healthy, setHealthy] = useState(false)
+    const [recipeSaved, setRecipeSaved] = useState(false)
+    const [sentToTrello, setSentToTrello] = useState(false)
+//   const [selectActive, setSelectActive] = useState(false)
 
     
 
@@ -84,8 +85,8 @@ export default function GetRecipe() {
     dishName = recipe['dish']
     ingredients = recipe['ingredients'].map(each => {
       return (
-        <div className='flex flex-row items-baseline'>
-          {selectActive && <input type="checkbox" className='mr-2' />}
+        <div className='flex flex-row'>
+          <input type="checkbox" className='mr-3' style={{verticalAlign: 'middle', position: 'relative', bottom:'.25em'}} />
           <li
           className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
           key={each}
@@ -253,8 +254,10 @@ export default function GetRecipe() {
           }
   }
   
-  function handleTrelloClick() {
-    setSelectActive(!selectActive)
+    function handleTrelloClick() {
+    //  Send each marked item to Trello API 
+    //   Set all check marks to empty
+    setSentToTrello(true)
   }
     
     
@@ -306,7 +309,10 @@ export default function GetRecipe() {
         <div className='w-full flex items-start mb-8'>
             <button
               className='btn btn-ghost text-xs'
-              onClick={handleTrelloClick}>add items to trello<span className='ml-2'>&#8594;</span></button>  
+            onClick={handleTrelloClick}>
+                          {sentToTrello ?
+                              ('items sent to trello')
+                              : (<span>add items to trello <span className='ml-2'>&#8594;</span></span>)}</button>  
         </div>
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
