@@ -26,7 +26,11 @@ const sample = {"dish": "fries",
 }
 
 export default function GetRecipe() {
-  const [recipe, setRecipe] = useState({})
+
+    const location = useLocation();
+    const displayRecipe = location.state ? location.state.recipe : {}
+
+  const [recipe, setRecipe] = useState(displayRecipe)
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
@@ -37,12 +41,11 @@ export default function GetRecipe() {
   const [recipeSaved, setRecipeSaved] = useState(false)
   const [selectActive, setSelectActive] = useState(false)
 
-    const location = useLocation();
-    const displayRecipe = location.state ? location.state.recipe : {}
+    
 
-    useEffect(() => {
-        setRecipe(displayRecipe);
-    }, [location]);
+    // useEffect(() => {
+    //     setRecipe(displayRecipe);
+    // }, [location]);
     
     
   const loadingStatements = [
