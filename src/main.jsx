@@ -6,7 +6,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
+import Root from './routes/Root.jsx';
 import ErrorPage from './routes/ErrorPage.jsx';
 import GetRecipe from './routes/GetRecipe.jsx';
 import Account from './routes/Account.jsx';
