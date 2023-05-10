@@ -6,6 +6,7 @@ import { collection, addDoc } from "firebase/firestore";
 import { Configuration, OpenAIApi } from "openai";
 import { FloppyDisk, FloppyDiskBack, HandsClapping, Carrot } from "@phosphor-icons/react";
 import { useLocation } from 'react-router-dom';
+import sendToTrello from '../utilities/sendToTrello';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -39,6 +40,7 @@ export default function GetRecipe() {
     const [enhanced, setEnhanced] = useState(false)
     const [healthy, setHealthy] = useState(false)
     const [recipeSaved, setRecipeSaved] = useState(false)
+    const [selectedIngredients, setSelectedIngredients] = useState([])
     const [sentToTrello, setSentToTrello] = useState(false)
 //   const [selectActive, setSelectActive] = useState(false)
 
@@ -85,12 +87,15 @@ export default function GetRecipe() {
     dishName = recipe['dish']
     ingredients = recipe['ingredients'].map(each => {
       return (
-        <div className='flex flex-row'>
-          <input type="checkbox" className='mr-3' style={{verticalAlign: 'middle', position: 'relative', bottom:'.25em'}} />
-          <li
+        <div className='flex flex-row' key={each}>
+              <input
+                  type="checkbox"
+                  className='mr-3'
+                  style={{ verticalAlign: 'middle', position: 'relative', bottom: '.25em' }} 
+                    onChange={(event) => handleCheckboxChange(event, each)}/>
+              <li
           className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
-          key={each}
-          onClick={() => { selectIngredient(each) }}>{each}</li>
+          onClick={() => { clickIngredient(each) }}>{each}</li>
         </div>
         
       )
@@ -114,7 +119,7 @@ export default function GetRecipe() {
     setPopup(!popup)
   }
 
-  function selectIngredient(each) {
+  function clickIngredient(each) {
     setSelectedIngredient(each)
     togglePopup()
   }
@@ -257,10 +262,27 @@ export default function GetRecipe() {
     function handleTrelloClick() {
     //  Send each marked item to Trello API 
     //   Set all check marks to empty
-    setSentToTrello(true)
+        console.log(selectedIngredients)
+        sendToTrello(selectedIngredients)
+        setSentToTrello(true)
   }
     
-    
+    function selectIngredient(ingredient) {
+        setSelectedIngredients((prevIngredients)=> [...prevIngredients, ingredient])
+    }
+
+    function unselectIngredient(ingredient) {
+        setSelectedIngredients((prevIngredients) => 
+        prevIngredients.filter((item) => item != ingredient))
+    }
+
+    function handleCheckboxChange(event, ingredient) {
+        if (event.target.checked) {
+            selectIngredient(ingredient)
+        } else {
+            unselectIngredient(ingredient)
+        }
+    }
 
   return (
     <div className='flex flex-col items-center '>

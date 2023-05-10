@@ -8,12 +8,6 @@ general
 - Enable delete functionality
 - Style page
 
-Implement add to trello functionality
-
-- Make default styling that check boxes appear with li items. Vertical center, space further from text
-- Customizing check boxes and passing state to each: https://blog.logrocket.com/building-custom-checkbox-react/
-- On trello button click, selected items are added to trello
-
 Styling:
 
 - Bug fix: sync animate pulse to new item load
