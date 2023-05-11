@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react'
 import '../App.css'
 import { db } from '../../firebase';
@@ -10,9 +9,7 @@ import sendToTrello from '../utilities/sendToTrello';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-
 export default function GetRecipe() {
-
   const location = useLocation();
   const displayRecipe = location.state ? location.state.recipe : {}
   
@@ -57,22 +54,6 @@ export default function GetRecipe() {
         <li className='text-sm list-none mb-1' key={each}><span className='font-bold'>{index + 1}. </span>{each}</li>
     )})
   }
-
-  // useEffect(() => {
-  //   if (recipe['ingredients']) {
-  //     console.log("running useEffect")
-  //     setDishName(recipe['dish'])
-  //     const mappedIngredients = recipe.ingredients.map((ingredient) => ({
-  //         name: ingredient,
-  //         checked: false
-  //       }))
-  //     setIngredients(mappedIngredients);
-  //     setDisplayIngredients(renderDisplayIngredients)
-  //     setInstructions(renderInstructions);
-  //   }
-  // }, [recipe]);
-
-  // UseEffect run when the recipe object is updated:
   
   useEffect(() => {
   if (recipe['ingredients']) {
