@@ -13,29 +13,87 @@ const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
 export default function GetRecipe() {
 
-    const location = useLocation();
-    const displayRecipe = location.state ? location.state.recipe : {}
+  const location = useLocation();
+  const displayRecipe = location.state ? location.state.recipe : {}
+  
+  const [recipe, setRecipe] = useState(displayRecipe)
+  const [popup, setPopup] = useState(false)
+  const [selectedIngredient, setSelectedIngredient] = useState("")
+  const [userInput, setUserInput] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [loadingIndex, setLoadingIndex] = useState(0);
+  const [enhanced, setEnhanced] = useState(false)
+  const [healthy, setHealthy] = useState(false)
+  const [recipeSaved, setRecipeSaved] = useState(false)
+  const [selectedIngredients, setSelectedIngredients] = useState([])
+  const [sentToTrello, setSentToTrello] = useState(false)
+  const [ingredients, setIngredients] = useState([])
+  const [dishName, setDishName] = useState("")
+  const [instructions, setInstructions] = useState([])
+  const [displayIngredients, setDisplayIngredients] = useState([])
+  
 
-    const [recipe, setRecipe] = useState(displayRecipe)
-    const [popup, setPopup] = useState(false)
-    const [selectedIngredient, setSelectedIngredient] = useState("")
-    const [userInput, setUserInput] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [loadingIndex, setLoadingIndex] = useState(0);
-    const [enhanced, setEnhanced] = useState(false)
-    const [healthy, setHealthy] = useState(false)
-    const [recipeSaved, setRecipeSaved] = useState(false)
-    const [selectedIngredients, setSelectedIngredients] = useState([])
-    const [sentToTrello, setSentToTrello] = useState(false)
-    const [ingredients, setIngredients] = useState(
-        recipe.ingredients?.map((ingredient) => ({
-            name: ingredient,
-            checked: false,
-        }))
-        );
+  function renderDisplayIngredients() {
+    return ingredients.map((ingredient, index) => {
+      return (
+        <div className='flex flex-row' key={index}>
+              <input
+                  type="checkbox"
+                  className='mr-3'
+                  style={{ verticalAlign: 'middle', position: 'relative', bottom: '.25em' }} 
+                  checked={ingredient.checked}  
+                  onChange={() => handleCheckboxChange(index)} />
+              <li
+          className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
+          onClick={() => { clickIngredient(ingredient.name) }}>{ingredient.name}</li>
+        </div>)
+    })
+  }
 
 
-    
+  function renderInstructions() {
+    return recipe['instructions'].map((each, index) => {
+      return (
+        <li className='text-sm list-none mb-1' key={each}><span className='font-bold'>{index + 1}. </span>{each}</li>
+    )})
+  }
+
+  // useEffect(() => {
+  //   if (recipe['ingredients']) {
+  //     console.log("running useEffect")
+  //     setDishName(recipe['dish'])
+  //     const mappedIngredients = recipe.ingredients.map((ingredient) => ({
+  //         name: ingredient,
+  //         checked: false
+  //       }))
+  //     setIngredients(mappedIngredients);
+  //     setDisplayIngredients(renderDisplayIngredients)
+  //     setInstructions(renderInstructions);
+  //   }
+  // }, [recipe]);
+
+  // UseEffect run when the recipe object is updated:
+  
+  useEffect(() => {
+  if (recipe['ingredients']) {
+    console.log("running useEffect");
+    setDishName(recipe['dish']);
+    const mappedIngredients = recipe.ingredients.map((ingredient) => ({
+      name: ingredient,
+      checked: false
+    }));
+    setIngredients(mappedIngredients);
+  }
+}, [recipe]);
+
+useEffect(() => {
+  if (ingredients.length > 0) {
+    setDisplayIngredients(renderDisplayIngredients);
+    setInstructions(renderInstructions);
+  }
+}, [ingredients]);
+
+
   const loadingStatements = [
   "Searching for the recipe online...",
   "Sifting through all the SEO content...",
@@ -54,44 +112,7 @@ export default function GetRecipe() {
   return () => clearInterval(intervalId);
 }, []);
 
-  // openAI configuration object
-  const configuration = new Configuration({
-      apiKey: apiKey,
-    });         
-  const openai = new OpenAIApi(configuration);
 
-
-  let dishName = ""
-    let instructions = []
-    let displayIngredients = []
-
-
-
-  if (recipe && recipe['dish'] && recipe['ingredients']) {
-    dishName = recipe['dish']
-    displayIngredients = ingredients.map((ingredient, index) => {
-      return (
-        <div className='flex flex-row' key={index}>
-              <input
-                  type="checkbox"
-                  className='mr-3'
-                  style={{ verticalAlign: 'middle', position: 'relative', bottom: '.25em' }} 
-                  checked={ingredient.checked}  
-                  onChange={() => handleCheckboxChange(index)} />
-              <li
-          className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
-          onClick={() => { clickIngredient(ingredient.name) }}>{ingredient.name}</li>
-        </div>
-        
-      )
-    })
-    instructions = recipe['instructions'].map((each, index) => {
-      return (
-        <li className='text-sm list-none mb-1' key={each}><span className='font-bold'>{index + 1}. </span>{each}</li>
-      )
-    })
-  }
-  
   function checkForSubmit(event) {
     if (userInput.trim().length < 3) return;
     if (event.key === 'Enter') {
@@ -129,13 +150,23 @@ export default function GetRecipe() {
   setIngredients(updatedIngredients);
 }
     
-    
+  
+  // openAI configuration object
+  const configuration = new Configuration({
+      apiKey: apiKey,
+    });         
+  const openai = new OpenAIApi(configuration);
+  
+  
+  
   function getRecipe() {
     setLoading(true);
 
     // Submit prompt to openAI API
     const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": [array of strings],
     "instructions": [array of strings]}`;
+
+    console.log(prompt)
 
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
