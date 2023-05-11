@@ -8,6 +8,7 @@ export default function SavedRecipes() {
     const [recipes, setRecipes] = useState([])
     const [popup, setPopup] = useState(false)
     const [selectedRecipe, setSelectedRecipe] = useState({})
+    const [dataObj, setDataObj] = useState({})
     const popupRef = useRef(null);
 
     function togglePopup() {
@@ -16,7 +17,8 @@ export default function SavedRecipes() {
 
     function clickRecipe(each, event) {
         event.stopPropagation();
-        setSelectedRecipe(each)
+        setSelectedRecipe(each.recipe)
+        setDataObj(each)
         togglePopup()
     }
 
@@ -77,7 +79,7 @@ export default function SavedRecipes() {
             <li
                 className='mb-6 text-left max-w-md mx-auto cursor-pointer text-gray-700 hover:text-orange-700 duration-200'
                 key={each['recipe']['dish']}
-                onClick={(event)=> clickRecipe(each['recipe'], event)}>
+                onClick={(event)=> clickRecipe(each, event)}>
                 {each['recipe']['dish']}
             </li>
         )
@@ -93,7 +95,7 @@ export default function SavedRecipes() {
                     className='bg-white shadow-md rounded-lg w-72 h-72 absolute top-52 flex flex-col items-center'>
                 <div className='text-lg font-bold my-12'>{selectedRecipe['dish']}</div>
                 <button className='btn btn-primary w-48 mb-4'><Link to={'/'}
-                    state={{ recipe: selectedRecipe }}
+                    state={{ recipe: selectedRecipe, healthy: dataObj.healthy, saved: dataObj.recipeSaved, enhanced: dataObj.enhanced, dataObj: dataObj }}
                 >get recipe</Link></button>
                 <button className='btn btn-ghost w-48 text-red-500' onClick={()=>deleteRecipe(selectedRecipe['dish'])}>delete</button>
           </div>}

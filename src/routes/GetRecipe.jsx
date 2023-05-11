@@ -12,16 +12,20 @@ const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 export default function GetRecipe() {
   const location = useLocation();
   const displayRecipe = location.state ? location.state.recipe : {}
-  
+  const isEnhanced = location.state ? location.state.enhanced : false
+  const isHealthy = location.state ? location.state.healthy : false
+  const isSaved = location.state ? location.state.saved : false
+
+  console.log(location.state)
+
   const [recipe, setRecipe] = useState(displayRecipe)
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
   const [userInput, setUserInput] = useState("")
   const [loading, setLoading] = useState(false)
-  const [loadingIndex, setLoadingIndex] = useState(0);
-  const [enhanced, setEnhanced] = useState(false)
-  const [healthy, setHealthy] = useState(false)
-  const [recipeSaved, setRecipeSaved] = useState(false)
+  const [enhanced, setEnhanced] = useState(isEnhanced)
+  const [healthy, setHealthy] = useState(isHealthy)
+  const [recipeSaved, setRecipeSaved] = useState(isSaved)
   const [selectedIngredients, setSelectedIngredients] = useState([])
   const [sentToTrello, setSentToTrello] = useState(false)
   const [ingredients, setIngredients] = useState([])
@@ -51,7 +55,7 @@ export default function GetRecipe() {
   function renderInstructions() {
     return recipe['instructions'].map((each, index) => {
       return (
-        <li className='text-sm list-none mb-1' key={each}><span className='font-bold'>{index + 1}. </span>{each}</li>
+        <li className='text-sm list-none mb-1' key={index}>{each}</li>
     )})
   }
   
@@ -75,23 +79,6 @@ useEffect(() => {
 }, [ingredients]);
 
 
-  const loadingStatements = [
-  "Searching for the recipe online...",
-  "Sifting through all the SEO content...",
-  "This could be a good option...",
-  "Dodging all the popup ads...",
-  "Skimming through the stories...",
-  "Closing a video...",
-  "Skipping over a banner ad...",
-];
-
-  // a useEffect hook that updates the loadingIndex state variable every two seconds, causing the loading statements to change:
-  useEffect(() => {
-  const intervalId = setInterval(() => {
-    setLoadingIndex((prevIndex) => (prevIndex + 1) % loadingStatements.length);
-  }, 4000);
-  return () => clearInterval(intervalId);
-}, []);
 
 
   function checkForSubmit(event) {
@@ -144,8 +131,8 @@ useEffect(() => {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": [array of strings],
-    "instructions": [array of strings]}`;
+    const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": ["", "", ...],
+    "instructions": ["1. ...", "2. ...", ... ]}`;
 
     console.log(prompt)
 
@@ -176,8 +163,8 @@ useEffect(() => {
     setLoading(true);
     setPopup(false)
     // Submit prompt to openAI API
-    const prompt = `Generate another version of this recipe but substitute the ${selectedIngredient} with something else: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
-    "instructions": [array of strings]}`;
+    const prompt = `Generate another version of this recipe but substitute the ${selectedIngredient} with something else: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
+    "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
 
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -206,8 +193,8 @@ useEffect(() => {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const prompt = `Enhance this recipe to make it more interesting and flavorful: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
-    "instructions": [array of strings]}`;
+    const prompt = `Enhance this recipe to make it more interesting and flavorful: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
+    "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
 
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -223,6 +210,7 @@ useEffect(() => {
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
         setRecipeSaved(false)
+        setEnhanced(true)
         setUserInput("")
       })
       .catch((error) => {
@@ -253,6 +241,7 @@ useEffect(() => {
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
         setRecipeSaved(false)
+        setHealthy(true)
         setUserInput("")
       })
       .catch((error) => {
@@ -267,7 +256,10 @@ useEffect(() => {
     try {
       const docRef = await addDoc(collection(db, "recipes"), {
         recipe: recipe,
-        date: new Date()
+        date: new Date(),
+        recipeSaved: true,
+        healthy: healthy,
+        enhanced: enhanced
       });
       console.log("Document written with ID: ", docRef.id);
       setRecipeSaved(true)
@@ -294,13 +286,6 @@ useEffect(() => {
         prevIngredients.filter((item) => item != ingredient))
     }
 
-    // function handleCheckboxChange(event, ingredient) {
-    //     if (event.target.checked) {
-    //         selectIngredient(ingredient)
-    //     } else {
-    //         unselectIngredient(ingredient)
-    //     }
-    // }
 
   return (
     <div className='flex flex-col items-center'>
@@ -316,32 +301,28 @@ useEffect(() => {
       
       {loading && 
         <div role="status" className='flex flex-col items-center'>
-        <svg aria-hidden="true" className="w-8 h-8 mt-4 text-gray-200 animate-spin  fill-slate-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg aria-hidden="true" className="w-8 h-8 mt-6 text-gray-200 animate-spin  fill-slate-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
             <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
         </svg>
-        <span className="sr-only">Loading...</span>
-        <p className="text-black mt-3 text-sm animate opacity-0 animate-[pulse_4s_cubic-bezier(0.4,0,0.6,1)_infinite]">
-        {loadingStatements[loadingIndex]}
-        </p>
         </div>
       }
       {!loading && 
-      <div className='w-8 h-20'></div>}
+      <div className='w-8 h-14'></div>}
       {instructions.length > 1 &&
         <div className='max-w-lg'>
         <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
     
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
-              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</button>
-              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={enhanceRecipe}><span className='sm:mr-3'><HandsClapping size={26} weight='light' /></span>enhance</button>}
+              <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
+              : <button className='btn w-24 h-16  btn-ghost text-neutral-600 text-xs' onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
-              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</button>
-              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={getHealthyRecipe}><span className='sm:mr-3'><Carrot size={26} weight='light' /></span>make healthy</button>}
+              <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
+              : <button className='btn w-24 h-16 btn-ghost text-neutral-600 text-xs' onClick={getHealthyRecipe}><span className=''><Carrot size={26} weight='light' /></span>make healthy</button>}
             {recipeSaved ?
-              <button className='btn w-24 h-16 sm:w-auto btn-ghost no-animation text-neutral-600 text-xs sm:text-sm'><span className='sm:mr-3'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</button>
-              : <button className='btn w-24 h-16 sm:w-auto btn-ghost text-neutral-600 text-xs sm:text-sm' onClick={saveRecipe}><span className='sm:mr-3'><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
+              <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</div>
+              : <button className='btn w-24 h-16 btn-ghost text-neutral-600 text-xs' onClick={saveRecipe}><span className=''><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
@@ -370,5 +351,4 @@ useEffect(() => {
     </div>
   )
 }
-
 

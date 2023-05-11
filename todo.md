@@ -1,16 +1,12 @@
 general
 
-- add "healthy" "enhanced" and "saved" to recipe object schema
-- edit prompts to prohibit any response with text outside of curly braces.
+- add "healthy" "enhanced" and "saved" to recipe object schema so that when a recipe is loaded these are statefully rendered.
 
 "saved recipes" page
 
-- Enable delete functionality
 - Style page
 
 Styling:
 
-- Bug fix: sync animate pulse to new item load
-- Customize cubic bezier on animate pulse
-- Disable reversing enhance and healthy
+- Conditionally style enhanced, healthy, saved
 - Prevent appearance of vertical scroll from pushing content left. This is only happening on the top content boxes
