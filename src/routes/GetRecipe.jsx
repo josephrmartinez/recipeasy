@@ -10,21 +10,6 @@ import sendToTrello from '../utilities/sendToTrello';
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
-const sample = {"dish": "fries", 
-"ingredients": [
-"4-5 large russet potatoes", 
-"1/4 cup vegetable oil", 
-"1 teaspoon salt"
-], 
-"instructions": [
-"Preheat oven to 450 degrees F (230 degrees C).",
-"Wash and peel potatoes, and cut into desired shape and size.",
-"In a large bowl, toss potatoes with vegetable oil and salt until evenly coated.",
-"Spread potatoes in a single layer on a baking sheet.",
-"Bake for 20-25 minutes, flipping once halfway through, or until golden brown and crispy.",
-"Remove from oven, let cool for a few minutes, and serve hot."
-]
-}
 
 export default function GetRecipe() {
 
@@ -42,14 +27,14 @@ export default function GetRecipe() {
     const [recipeSaved, setRecipeSaved] = useState(false)
     const [selectedIngredients, setSelectedIngredients] = useState([])
     const [sentToTrello, setSentToTrello] = useState(false)
-//   const [selectActive, setSelectActive] = useState(false)
+    const [ingredients, setIngredients] = useState(
+        recipe.ingredients?.map((ingredient) => ({
+            name: ingredient,
+            checked: false,
+        }))
+        );
 
-    
 
-    // useEffect(() => {
-    //     setRecipe(displayRecipe);
-    // }, [location]);
-    
     
   const loadingStatements = [
   "Searching for the recipe online...",
@@ -60,8 +45,6 @@ export default function GetRecipe() {
   "Closing a video...",
   "Skipping over a banner ad...",
 ];
-
-    
 
   // a useEffect hook that updates the loadingIndex state variable every two seconds, causing the loading statements to change:
   useEffect(() => {
@@ -79,23 +62,25 @@ export default function GetRecipe() {
 
 
   let dishName = ""
-  let ingredients = []
-  let instructions = []
+    let instructions = []
+    let displayIngredients = []
+
 
 
   if (recipe && recipe['dish'] && recipe['ingredients']) {
     dishName = recipe['dish']
-    ingredients = recipe['ingredients'].map(each => {
+    displayIngredients = ingredients.map((ingredient, index) => {
       return (
-        <div className='flex flex-row' key={each}>
+        <div className='flex flex-row' key={index}>
               <input
                   type="checkbox"
                   className='mr-3'
                   style={{ verticalAlign: 'middle', position: 'relative', bottom: '.25em' }} 
-                    onChange={(event) => handleCheckboxChange(event, each)}/>
+                  checked={ingredient.checked}  
+                  onChange={() => handleCheckboxChange(index)} />
               <li
           className='text-sm cursor-pointer list-none mb-2 hover:opacity-60'
-          onClick={() => { clickIngredient(each) }}>{each}</li>
+          onClick={() => { clickIngredient(ingredient.name) }}>{ingredient.name}</li>
         </div>
         
       )
@@ -124,6 +109,27 @@ export default function GetRecipe() {
     togglePopup()
   }
 
+    
+    function handleCheckboxChange(index) {
+        const updatedIngredients = [...ingredients];
+        updatedIngredients[index].checked = !updatedIngredients[index].checked;
+        setIngredients(updatedIngredients);
+        const selectedIngredients = updatedIngredients
+            .filter(ingredient => ingredient.checked)
+            .map(ingredient => ingredient.name);
+        setSelectedIngredients(selectedIngredients);
+};
+
+
+  function handleCheckAll() {
+  const updatedIngredients = ingredients.map((ingredient) => ({
+    ...ingredient,
+    checked: false,
+  }));
+  setIngredients(updatedIngredients);
+}
+    
+    
   function getRecipe() {
     setLoading(true);
 
@@ -260,10 +266,10 @@ export default function GetRecipe() {
   }
   
     function handleTrelloClick() {
-    //  Send each marked item to Trello API 
-    //   Set all check marks to empty
         console.log(selectedIngredients)
         sendToTrello(selectedIngredients)
+        setSelectedIngredients([])
+        handleCheckAll()
         setSentToTrello(true)
   }
     
@@ -276,16 +282,16 @@ export default function GetRecipe() {
         prevIngredients.filter((item) => item != ingredient))
     }
 
-    function handleCheckboxChange(event, ingredient) {
-        if (event.target.checked) {
-            selectIngredient(ingredient)
-        } else {
-            unselectIngredient(ingredient)
-        }
-    }
+    // function handleCheckboxChange(event, ingredient) {
+    //     if (event.target.checked) {
+    //         selectIngredient(ingredient)
+    //     } else {
+    //         unselectIngredient(ingredient)
+    //     }
+    // }
 
   return (
-    <div className='flex flex-col items-center '>
+    <div className='flex flex-col items-center'>
       <div className='flex flex-row mx-auto w-fit'>
         <input
         type="text"
@@ -327,7 +333,7 @@ export default function GetRecipe() {
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
-        <div className='flex flex-col items-start text-left'>{ingredients}</div>
+        <div className='flex flex-col items-start text-left'>{displayIngredients}</div>
         <div className='w-full flex items-start mb-8'>
             <button
               className='btn btn-ghost text-xs'

@@ -1,6 +1,6 @@
 general
 
-- add "healthy" "enhanced" and "saved" to object schema
+- add "healthy" "enhanced" and "saved" to recipe object schema
 - edit prompts to prohibit any response with text outside of curly braces.
 
 "saved recipes" page
