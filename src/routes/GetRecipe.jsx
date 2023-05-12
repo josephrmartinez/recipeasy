@@ -16,8 +16,6 @@ export default function GetRecipe() {
   const isHealthy = location.state ? location.state.healthy : false
   const isSaved = location.state ? location.state.saved : false
 
-  console.log(location.state)
-
   const [recipe, setRecipe] = useState(displayRecipe)
   const [popup, setPopup] = useState(false)
   const [selectedIngredient, setSelectedIngredient] = useState("")
@@ -134,8 +132,6 @@ useEffect(() => {
     const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": ["", "", ...],
     "instructions": ["1. ...", "2. ...", ... ]}`;
 
-    console.log(prompt)
-
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
@@ -176,7 +172,6 @@ useEffect(() => {
           completion.data.choices[0].message.content;
 
         console.log(completion);  
-        console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
         setRecipeSaved(false)
@@ -196,6 +191,7 @@ useEffect(() => {
     const prompt = `Enhance this recipe to make it more interesting and flavorful: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
     "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
 
+
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
@@ -206,7 +202,6 @@ useEffect(() => {
           completion.data.choices[0].message.content;
 
         console.log(completion);  
-        console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
         setRecipeSaved(false)
@@ -224,8 +219,8 @@ useEffect(() => {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const prompt = `Rewrite this recipe to be healthier: ${JSON.stringify(recipe)} Format response as: {"dish": ${dishName}, "ingredients": [array of strings],
-    "instructions": [array of strings]}`;
+    const prompt = `Rewrite this recipe to be healthier: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
+    "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
 
     openai.createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -237,7 +232,6 @@ useEffect(() => {
           completion.data.choices[0].message.content;
 
         console.log(completion);  
-        console.log(generatedText);
         setLoading(false)
         setRecipe(JSON.parse(generatedText));
         setRecipeSaved(false)
