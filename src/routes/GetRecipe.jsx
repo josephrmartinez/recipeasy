@@ -129,18 +129,43 @@ useEffect(() => {
     setLoading(true);
 
     // Submit prompt to openAI API
-    const prompt = `return a recipe for ${userInput} formatted as: {"dish": ${userInput}, "ingredients": ["", "", ...],
-    "instructions": ["1. ...", "2. ...", ... ]}`;
+    const prompt = `return a recipe for ${userInput}`;
+
+
+    const schema = {
+      "type": "object",
+      "properties": {
+        "dish": {
+          "type": "string",
+          "description": "Descriptive title of the dish"
+        },
+        "ingredients": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "instructions": {
+          "type": "array",
+          "description": "Numbered steps to prepare the recipe.",
+          "items": {"type": "string"}
+        }
+      }
+    }
 
     openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
+      model: "gpt-3.5-turbo-0613",
+      messages: [
+        { role: "system", "content": "You are a helpful recipe assistant." },
+        { role: "user", content: prompt }],
+      functions: [{ name: "set_recipe", parameters: schema }],
+      function_call: {name: "set_recipe"}
+      
+      
     })
       .then((completion) => {
         // Handle API response
         const generatedText =
-          completion.data.choices[0].message.content;
-
+          completion.data.choices[0].message.function_call.arguments;
+        
         console.log(completion);  
         console.log(generatedText);
         setLoading(false)
@@ -346,3 +371,38 @@ useEffect(() => {
   )
 }
 
+
+
+
+
+  // function getRecipe() {
+  //   setLoading(true);
+
+  //   // Submit prompt to openAI API
+  //   const prompt = `return a recipe for ${userInput} in JSON format: {"dish": ${userInput}, "ingredients": ["", "", ...],
+  //   "instructions": ["1. ...", "2. ...", ... ]}`;
+
+  //   openai.createChatCompletion({
+  //     model: "gpt-3.5-turbo",
+  //     messages: [{ role: "system", "content": "You are a helpful recipe assistant."},
+  //       { role: "user", content: prompt }],
+      
+  //   })
+  //     .then((completion) => {
+  //       // Handle API response
+  //       const generatedText =
+  //         completion.data.choices[0].message.content;
+  //       console.log(prompt)
+  //       console.log(completion);  
+  //       console.log(generatedText);
+  //       setLoading(false)
+  //       setRecipe(JSON.parse(generatedText));
+  //       setRecipeSaved(false)
+  //       setUserInput("")
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setLoading(false)
+  //       setRecipe("");
+  //     });
+  // }
