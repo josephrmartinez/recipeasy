@@ -125,6 +125,39 @@ useEffect(() => {
   
   
   
+  // function getRecipe() {
+  //   setLoading(true);
+
+  //   // Submit prompt to openAI API
+  //   const prompt = `return a recipe for ${userInput}. Provide your response as a JSON object with the following schema: {"dish": ${userInput}, "ingredients": ["", "", ...],
+  //   "instructions": ["1. ...", "2. ...", ... ]}`;
+
+  //   openai.createChatCompletion({
+  //     model: "gpt-3.5-turbo",
+  //     messages: [{ role: "system", "content": "You are a helpful recipe assistant."},
+  //       { role: "user", content: prompt }],
+      
+  //   })
+  //     .then((completion) => {
+  //       // Handle API response
+  //       const generatedText =
+  //         completion.data.choices[0].message.content;
+  //       console.log(prompt)
+  //       console.log(completion);  
+  //       console.log(generatedText);
+  //       setLoading(false)
+  //       setRecipe(JSON.parse(generatedText));
+  //       setRecipeSaved(false)
+  //       setUserInput("")
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       setLoading(false)
+  //       setRecipe("");
+  //     });
+  // }
+
+
   function getRecipe() {
     setLoading(true);
 
