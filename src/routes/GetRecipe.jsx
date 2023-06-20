@@ -30,6 +30,7 @@ export default function GetRecipe() {
   const [dishName, setDishName] = useState("")
   const [instructions, setInstructions] = useState([])
   const [displayIngredients, setDisplayIngredients] = useState([])
+  const [imgSrc, setImgSrc] = useState("")
   
 
   function renderDisplayIngredients() {
@@ -159,59 +160,75 @@ useEffect(() => {
 
 
   function getRecipe() {
-    setLoading(true);
+  if (!userInput) {
+    console.error("Please provide a valid input.");
+    return;
+  }
 
-    // Submit prompt to openAI API
-    const prompt = `return a recipe for ${userInput}`;
+  setLoading(true);
 
+  const prompt = `return a recipe for ${userInput}`;
 
-    const schema = {
-      "type": "object",
-      "properties": {
-        "dish": {
-          "type": "string",
-          "description": "Descriptive title of the dish"
-        },
-        "ingredients": {
-          "type": "array",
-          "items": {"type": "string"}
-        },
-        "instructions": {
-          "type": "array",
-          "description": "Numbered steps to prepare the recipe.",
-          "items": {"type": "string"}
-        }
+  const schema = {
+    "type": "object",
+    "properties": {
+      "dish": {
+        "type": "string",
+        "description": "Descriptive title of the dish"
+      },
+      "ingredients": {
+        "type": "array",
+        "items": { "type": "string" }
+      },
+      "instructions": {
+        "type": "array",
+        "description": "Numbered steps to prepare the recipe.",
+        "items": { "type": "string" }
       }
     }
+  };
 
-    openai.createChatCompletion({
-      model: "gpt-3.5-turbo-0613",
-      messages: [
-        { role: "system", "content": "You are a helpful recipe assistant." },
-        { role: "user", content: prompt }],
-      functions: [{ name: "set_recipe", parameters: schema }],
-      function_call: {name: "set_recipe"}
-      
-      
+  const chatCompletionParams = {
+    model: "<YOUR_MODEL_VERSION>", // Specify the OpenAI model version here
+    messages: [
+      { role: "system", "content": "You are a helpful recipe assistant." },
+      { role: "user", content: prompt }
+    ],
+    functions: [{ name: "set_recipe", parameters: schema }],
+    function_call: { name: "set_recipe" }
+  };
+
+  const imageParams = {
+    prompt: `A photorealistic image of ${userInput} that would be suitable for publication in a cookbook.`,
+    n: 1,
+    size: '256x256',
+    response_format: 'b64_json'
+  };
+
+  openai.createChatCompletion(chatCompletionParams)
+    .then((completion) => {
+      const generatedText = completion.data.choices[0].message.function_call.arguments;
+      setRecipe(JSON.parse(generatedText));
+      setRecipeSaved(false);
+
+      return openai.createImage(imageParams);
     })
-      .then((completion) => {
-        // Handle API response
-        const generatedText =
-          completion.data.choices[0].message.function_call.arguments;
-        
-        console.log(completion);  
-        console.log(generatedText);
-        setLoading(false)
-        setRecipe(JSON.parse(generatedText));
-        setRecipeSaved(false)
-        setUserInput("")
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false)
-        setRecipe("");
-      });
+    .then((response) => {
+      const imageData = response.data.data[0].b64_json;
+      setImgSrc(`data:image/png;base64,${imageData}`);
+    })
+    .catch((error) => {
+      console.error("Error occurred:", error);
+      setRecipe("");
+    })
+    .finally(() => {
+      setLoading(false);
+      setUserInput("");
+    });
   }
+  
+
+
 
   function getRecipeWithSubstitute() {
     setLoading(true);
@@ -363,7 +380,8 @@ useEffect(() => {
       <div className='w-8 h-14'></div>}
       {instructions.length > 1 &&
         <div className='max-w-lg'>
-        <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+          <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+          <div className='flex flex-col items-center w-full'><img src={imgSrc}></img></div>
     
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
