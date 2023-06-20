@@ -189,7 +189,7 @@ useEffect(() => {
   };
 
   const chatCompletionParams = {
-    model: "<YOUR_MODEL_VERSION>", // Specify the OpenAI model version here
+    model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
     messages: [
       { role: "system", "content": "You are a helpful recipe assistant." },
       { role: "user", content: prompt }
@@ -199,7 +199,7 @@ useEffect(() => {
   };
 
   const imageParams = {
-    prompt: `A photorealistic image of ${userInput} that would be suitable for publication in a cookbook.`,
+    prompt: `A high quality, detailed, 4k image of ${userInput} that is of very high quality and precision.`,
     n: 1,
     size: '256x256',
     response_format: 'b64_json'
@@ -380,9 +380,9 @@ useEffect(() => {
       <div className='w-8 h-14'></div>}
       {instructions.length > 1 &&
         <div className='max-w-lg'>
+          
           <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
-          <div className='flex flex-col items-center w-full'><img src={imgSrc}></img></div>
-    
+    <div className='flex flex-col items-center w-full'><img className="rounded-lg" src={imgSrc}></img></div>
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
@@ -404,7 +404,8 @@ useEffect(() => {
                           {sentToTrello ?
                               ('items sent to trello')
                               : (<span>add items to trello <span className='ml-2'>&#8594;</span></span>)}</button>  
-        </div>
+          </div>
+          
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
         
@@ -421,39 +422,3 @@ useEffect(() => {
     </div>
   )
 }
-
-
-
-
-
-  // function getRecipe() {
-  //   setLoading(true);
-
-  //   // Submit prompt to openAI API
-  //   const prompt = `return a recipe for ${userInput} in JSON format: {"dish": ${userInput}, "ingredients": ["", "", ...],
-  //   "instructions": ["1. ...", "2. ...", ... ]}`;
-
-  //   openai.createChatCompletion({
-  //     model: "gpt-3.5-turbo",
-  //     messages: [{ role: "system", "content": "You are a helpful recipe assistant."},
-  //       { role: "user", content: prompt }],
-      
-  //   })
-  //     .then((completion) => {
-  //       // Handle API response
-  //       const generatedText =
-  //         completion.data.choices[0].message.content;
-  //       console.log(prompt)
-  //       console.log(completion);  
-  //       console.log(generatedText);
-  //       setLoading(false)
-  //       setRecipe(JSON.parse(generatedText));
-  //       setRecipeSaved(false)
-  //       setUserInput("")
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       setLoading(false)
-  //       setRecipe("");
-  //     });
-  // }
