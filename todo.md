@@ -1,2 +1,5 @@
 - style saved recipe page
-- implement design improvements informed by RefactoringUI
+- update firestore save function to store recipe image
+- update loadRecipe to load stored image from database
+
+- update enhance and healthy functions to use JSON schema

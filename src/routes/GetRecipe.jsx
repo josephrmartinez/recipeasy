@@ -58,11 +58,15 @@ export default function GetRecipe() {
 
 
   function renderInstructions() {
-    return recipe['instructions'].map((each, index) => {
-      return (
-        <li className='text-sm list-none mb-5' key={index}><span className='font-semibold'>{index + 1}.</span> {each}</li>
-    )})
-  }
+    return recipe['instructions'].map((each, index) => (
+    <div
+      key={index}
+      className={`text-sm py-3 rounded-lg px-3 ${index % 2 === 0 ? 'bg-neutral-200/20' : ''}`}
+    >
+      <span className="font-semibold">{index + 1}.</span> {each}
+    </div>
+  ));
+}
   
   useEffect(() => {
   if (recipe['ingredients']) {
