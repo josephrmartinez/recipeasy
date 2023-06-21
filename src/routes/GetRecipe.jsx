@@ -60,7 +60,7 @@ export default function GetRecipe() {
   function renderInstructions() {
     return recipe['instructions'].map((each, index) => {
       return (
-        <li className='text-sm list-none mb-1' key={index}>{each}</li>
+        <li className='text-sm list-none mb-1' key={index}>{index + 1}. {each}</li>
     )})
   }
   
@@ -353,14 +353,14 @@ useEffect(() => {
       
       
       
-      <div className='w-8 h-14'></div>
+      <div className='w-8 h-6'></div>
 
-      
+
       {instructions.length > 1 &&
         <div className='max-w-lg'>
           
           <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
-    <div className='flex flex-col items-center w-full'><img className="rounded-lg" src={imgSrc}></img></div>
+    <div className='flex flex-col items-center w-full'><img className="rounded-lg w-full object-cover" src={imgSrc}></img></div>
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
