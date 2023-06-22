@@ -77,7 +77,7 @@ export default function SavedRecipes() {
     
     const recipeList = recipes.map((each, index) => (
             <li
-            className={`py-6 px-3 text-left max-w-md mx-auto cursor-pointer text-gray-800/80 hover:text-orange-700 duration-200 ${index % 2 === 0 ? 'bg-neutral-200/20' : ''}`}
+            className={`py-6 px-3 text-left max-w-md mx-auto cursor-pointer tracking-wide text-gray-700 hover:text-orange-700 duration-200 ${index % 2 === 0 ? 'bg-neutral-200/20' : ''}`}
                 key={each['recipe']['dish']}
                 onClick={(event)=> clickRecipe(each, event)}>
                 {each['recipe']['dish']}
@@ -86,7 +86,7 @@ export default function SavedRecipes() {
 
     return (
         <div className='flex flex-col items-center'>
-            <div className='text-xl mb-6 font-semibold'>saved recipes</div>
+            <div className='text-xl mb-6 tracking-wide font-bold'>saved recipes</div>
             <ul>{recipeList}</ul>
             {popup && 
                 <div
