@@ -171,7 +171,7 @@ useEffect(() => {
     prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
     n: 1,
     size: '256x256',
-    response_format: 'b64_json'
+    response_format: 'url'
   };
 
   openai.createChatCompletion(chatCompletionParams)
@@ -183,8 +183,9 @@ useEffect(() => {
       return openai.createImage(imageParams);
     })
     .then((response) => {
-      const imageData = response.data.data[0].b64_json;
-      setImgSrc(`data:image/png;base64,${imageData}`);
+      const imageData = response.data.data[0].url;
+      console.log(imageData)
+      setImgSrc(`${imageData}`);
     })
     .catch((error) => {
       console.error("Error occurred:", error);
@@ -197,6 +198,36 @@ useEffect(() => {
   }
   
 
+
+
+  // const imageParams = {
+  //   prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
+  //   n: 1,
+  //   size: '256x256',
+  //   response_format: 'b64_json'
+  // };
+// 
+  // openai.createChatCompletion(chatCompletionParams)
+  //   .then((completion) => {
+  //     const generatedText = completion.data.choices[0].message.function_call.arguments;
+  //     setRecipe(JSON.parse(generatedText));
+  //     setRecipeSaved(false);
+
+  //     return openai.createImage(imageParams);
+  //   })
+  //   .then((response) => {
+  //     const imageData = response.data.data[0].b64_json;
+  //     setImgSrc(`data:image/png;base64,${imageData}`);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error occurred:", error);
+  //     setRecipe("");
+  //   })
+  //   .finally(() => {
+  //     setLoading(false);
+  //     setUserInput("");
+  //   });
+  // }
 
 
   function getRecipeWithSubstitute() {
@@ -308,7 +339,6 @@ useEffect(() => {
   }
   
     function handleTrelloClick() {
-        console.log(selectedIngredients)
         sendToTrello(selectedIngredients)
         setSelectedIngredients([])
         handleCheckAll()
@@ -394,12 +424,14 @@ useEffect(() => {
         
       </div>}
       {popup && 
-        <div className='bg-white shadow-md rounded-lg w-72 sm:w-80 h-72 absolute top-52 flex flex-col items-center'>
+        <div className='fixed inset-0 flex items-center justify-center z-50'>
+        <div className='bg-white shadow-md rounded-lg w-72 sm:w-80 h-72 flex flex-col items-center'>
           <div className='text-lg font-bold my-12 sm:my-16'>{selectedIngredient}</div>
         
           <button className='btn btn-primary w-48 mb-4' onClick={getRecipeWithSubstitute}>substitute</button>
           <button className='btn btn-ghost w-48' onClick={togglePopup}>cancel</button>
           
+          </div>
           </div>}
     </div>
   )
