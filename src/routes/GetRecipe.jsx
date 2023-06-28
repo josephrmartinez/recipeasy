@@ -463,13 +463,13 @@ useEffect(() => {
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
-              : <button className={`btn ${enhancing && 'animate-pulse'} w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
+              : <button className={`btn  w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className={`${enhancing && 'animate-bounce'}`}><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
               <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
-              : <button className={`btn ${makingHealthy && 'animate-pulse'} w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className=''><Carrot size={26} weight='light' /></span>make healthy</button>}
+              : <button className={`btn w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className={`${makingHealthy && 'animate-bounce'}`}><Carrot size={26} weight='light' /></span>make healthy</button>}
             {recipeSaved ?
               <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</div>
-              : <button className={`btn ${saving && 'animate-pulse'} w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={saveRecipe}><span className=''><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
+              : <button className={`btn w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={saveRecipe}><span className={`${saving && 'animate-bounce'}`}><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
