@@ -424,7 +424,7 @@ useEffect(() => {
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
-              : <button className={`btn ${enhancing && 'animate-pulse'} w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
+              : <button className={`btn ${enhancing && 'animate-bounce'} w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
               <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
               : <button className={`btn w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className=''><Carrot size={26} weight='light' /></span>make healthy</button>}
