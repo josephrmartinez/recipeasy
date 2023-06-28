@@ -65,7 +65,7 @@ export default function GetRecipe() {
     return recipe['instructions'].map((each, index) => (
     <div
       key={index}
-      className={`text-sm py-3 rounded-lg px-3 ${index % 2 === 0 ? 'bg-neutral-200/20' : ''}`}
+      className={`text-sm w-full py-3 rounded-lg px-3 ${index % 2 === 0 ? 'bg-neutral-200/20' : ''}`}
     >
       <span className="font-semibold">{index + 1}.</span> {each}
     </div>
@@ -417,7 +417,7 @@ useEffect(() => {
           {imgSrc ? (
           <img className="rounded-lg w-full object-cover shadow-md" src={imgSrc} alt="AI Generated Food Image" />
         ) : (
-          <img className="rounded-lg w-full object-cover shadow-md animate-pulse" src="../../public/blank.svg" />
+          <img className="rounded-lg w-full object-cover shadow-md animate-pulse" src="/blank.svg" />
         )}
       </div>
      
