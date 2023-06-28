@@ -15,6 +15,7 @@ export default function GetRecipe() {
   const isEnhanced = location.state ? location.state.enhanced : false
   const isHealthy = location.state ? location.state.healthy : false
   const isSaved = location.state ? location.state.saved : false
+  const recipeImg = location.state ? location.state.img : ""
 
   const [recipe, setRecipe] = useState(displayRecipe)
   const [popup, setPopup] = useState(false)
@@ -30,7 +31,7 @@ export default function GetRecipe() {
   const [dishName, setDishName] = useState("")
   const [instructions, setInstructions] = useState([])
   const [displayIngredients, setDisplayIngredients] = useState([])
-  const [imgSrc, setImgSrc] = useState("")
+  const [imgSrc, setImgSrc] = useState(recipeImg)
 
   // openAI configuration object
   const configuration = new Configuration({
@@ -176,7 +177,7 @@ useEffect(() => {
       const generatedText = completion.data.choices[0].message.function_call.arguments;
       const recipeObj = JSON.parse(generatedText)
       console.log(recipeObj['dish'])
-      setRecipe(JSON.parse(generatedText));
+      setRecipe(recipeObj);
       setRecipeSaved(false);
 
       const imageParams = {

@@ -20,6 +20,7 @@ export default function SavedRecipes() {
         setSelectedRecipe(each.recipe)
         setDataObj(each)
         togglePopup()
+        
     }
 
     async function getRecipes(e) {
@@ -92,9 +93,9 @@ export default function SavedRecipes() {
                 <div
                     ref={popupRef}
                     className='bg-white shadow-md rounded-lg w-72 h-72 absolute top-52 flex flex-col items-center'>
-                <div className='text-lg font-bold my-12'>{selectedRecipe['dish']}</div>
+                <div className='text-lg font-bold my-12' onClick={() => {console.log(dataObj.img)}}>{selectedRecipe['dish']}</div>
                 <button className='btn btn-primary w-48 mb-4'><Link to={'/'}
-                    state={{ recipe: selectedRecipe, healthy: dataObj.healthy, saved: dataObj.recipeSaved, enhanced: dataObj.enhanced, dataObj: dataObj }}
+                    state={{ recipe: selectedRecipe, healthy: dataObj.healthy, saved: dataObj.recipeSaved, enhanced: dataObj.enhanced, dataObj: dataObj, img: dataObj.img }}
                 >get recipe</Link></button>
                 <button className='btn btn-ghost w-48 text-red-500' onClick={()=>deleteRecipe(selectedRecipe['dish'])}>delete</button>
           </div>}
