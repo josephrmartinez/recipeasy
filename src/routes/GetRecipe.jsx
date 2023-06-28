@@ -135,6 +135,8 @@ useEffect(() => {
   }
 
   setLoading(true);
+  setImgSrc("")
+  setInstructions([])
 
   const prompt = `return a recipe for ${userInput}`;
 
@@ -167,25 +169,29 @@ useEffect(() => {
     function_call: { name: "set_recipe" }
   };
 
-  const imageParams = {
-    prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
-    n: 1,
-    size: '256x256',
-    response_format: 'url'
-  };
+  
 
   openai.createChatCompletion(chatCompletionParams)
     .then((completion) => {
       const generatedText = completion.data.choices[0].message.function_call.arguments;
+      const recipeObj = JSON.parse(generatedText)
+      console.log(recipeObj['dish'])
       setRecipe(JSON.parse(generatedText));
       setRecipeSaved(false);
 
+      const imageParams = {
+        prompt: `A high quality, detailed, 4k image of ${recipeObj['dish']} for publication in the New York Times Cooking section.`,
+        n: 1,
+        size: '256x256',
+        response_format: 'b64_json'
+      };
+      console.log(imageParams)
       return openai.createImage(imageParams);
     })
     .then((response) => {
-      const imageData = response.data.data[0].url;
-      console.log(imageData)
-      setImgSrc(`${imageData}`);
+      const imageData = response.data.data[0].b64_json;
+      
+      setImgSrc(`data:image/png;base64,${imageData}`);
     })
     .catch((error) => {
       console.error("Error occurred:", error);
@@ -196,38 +202,6 @@ useEffect(() => {
       setUserInput("");
     });
   }
-  
-
-
-
-  // const imageParams = {
-  //   prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
-  //   n: 1,
-  //   size: '256x256',
-  //   response_format: 'b64_json'
-  // };
-// 
-  // openai.createChatCompletion(chatCompletionParams)
-  //   .then((completion) => {
-  //     const generatedText = completion.data.choices[0].message.function_call.arguments;
-  //     setRecipe(JSON.parse(generatedText));
-  //     setRecipeSaved(false);
-
-  //     return openai.createImage(imageParams);
-  //   })
-  //   .then((response) => {
-  //     const imageData = response.data.data[0].b64_json;
-  //     setImgSrc(`data:image/png;base64,${imageData}`);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error occurred:", error);
-  //     setRecipe("");
-  //   })
-  //   .finally(() => {
-  //     setLoading(false);
-  //     setUserInput("");
-  //   });
-  // }
 
 
   function getRecipeWithSubstitute() {
@@ -261,34 +235,71 @@ useEffect(() => {
 
   function enhanceRecipe() {
     setLoading(true);
+    setImgSrc("")
 
-    // Submit prompt to openAI API
-    const prompt = `Enhance this recipe to make it more interesting and flavorful: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
-    "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
+      const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the enhanced recipe. Here is the original recipe for you to enhance: ${JSON.stringify(recipe)}`;
+    
+      const schema = {
+        "type": "object",
+        "properties": {
+          "dish": {
+            "type": "string",
+            "description": "Descriptive title of the dish"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "instructions": {
+            "type": "array",
+            "description": "Numbered steps to prepare the recipe.",
+            "items": { "type": "string" }
+          }
+        }
+      };
+    
+      const chatCompletionParams = {
+        model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
+        messages: [
+          { role: "system", "content": "You are a helpful recipe assistant." },
+          { role: "user", content: prompt }
+        ],
+        functions: [{ name: "set_recipe", parameters: schema }],
+        function_call: { name: "set_recipe" }
+      };
+    
+      
+    
+      openai.createChatCompletion(chatCompletionParams)
+        .then((completion) => {
+          const generatedText = completion.data.choices[0].message.function_call.arguments;
+          setRecipe(JSON.parse(generatedText));
+          setRecipeSaved(false);
 
-
-    openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-    })
-      .then((completion) => {
-        // Handle API response
-        const generatedText =
-          completion.data.choices[0].message.content;
-
-        console.log(completion);  
-        setLoading(false)
-        setRecipe(JSON.parse(generatedText));
-        setRecipeSaved(false)
-        setEnhanced(true)
-        setUserInput("")
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false)
-        setRecipe("");
-      });
-  }
+          const imageParams = {
+            prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
+            n: 1,
+            size: '256x256',
+            response_format: 'b64_json'
+          };
+    
+          return openai.createImage(imageParams);
+        })
+        .then((response) => {
+          console.log(response)
+          const imageData = response.data.data[0].b64_json;
+          setImgSrc(`data:image/png;base64,${imageData}`);
+        })
+        .catch((error) => {
+          console.error("Error occurred:", error);
+          setRecipe("");
+        })
+        .finally(() => {
+          setLoading(false);
+          setUserInput("");
+        });
+      }
+    
 
   function getHealthyRecipe() {
     setLoading(true);
@@ -328,7 +339,8 @@ useEffect(() => {
         date: new Date(),
         recipeSaved: true,
         healthy: healthy,
-        enhanced: enhanced
+        enhanced: enhanced,
+        img: imgSrc
       });
       console.log("Document written with ID: ", docRef.id);
       setRecipeSaved(true)
@@ -382,7 +394,6 @@ useEffect(() => {
               </svg>
             </div>
             generating recipe</button>}
-
       </div>
       
       
@@ -393,8 +404,16 @@ useEffect(() => {
       {instructions.length > 1 &&
         <div className='max-w-lg'>
           
-          <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
-    <div className='flex flex-col items-center w-full'><img className="rounded-lg w-full object-cover shadow-md" src={imgSrc}></img></div>
+      <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+     
+      <div className='flex flex-col items-center w-full h-full max-w-lg'>
+          {imgSrc ? (
+          <img className="rounded-lg w-full object-cover shadow-md" src={imgSrc} alt="AI Generated Food Image" />
+        ) : (
+          <img className="rounded-lg w-full object-cover shadow-md animate-pulse" src="../../public/blank.svg" />
+        )}
+      </div>
+     
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
@@ -436,3 +455,43 @@ useEffect(() => {
     </div>
   )
 }
+
+
+{/* <div className='flex flex-col items-center w-full h-full'>
+          {!imgSrc ? (
+          <img className="rounded-lg w-full object-cover shadow-md" src={imgSrc} alt="AI Generated Food Image" />
+        ) : (
+          <div className="rounded-lg bg-neutral-300 shadow-md w-full h-full object-cover"></div>
+        )}
+      </div> */}
+
+
+  // const imageParams = {
+  //   prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
+  //   n: 1,
+  //   size: '256x256',
+  //   response_format: 'url'
+  // };
+
+  // openai.createChatCompletion(chatCompletionParams)
+  //   .then((completion) => {
+  //     const generatedText = completion.data.choices[0].message.function_call.arguments;
+  //     setRecipe(JSON.parse(generatedText));
+  //     setRecipeSaved(false);
+
+  //     return openai.createImage(imageParams);
+  //   })
+  //   .then((response) => {
+  //     const imageData = response.data.data[0].url;
+  //     console.log(imageData)
+  //     setImgSrc(`${imageData}`);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error occurred:", error);
+  //     setRecipe("");
+  //   })
+  //   .finally(() => {
+  //     setLoading(false);
+  //     setUserInput("");
+  //   });
+  // }
