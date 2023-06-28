@@ -25,6 +25,7 @@ export default function GetRecipe() {
   const [enhanced, setEnhanced] = useState(isEnhanced)
   const [enhancing, setEnhancing] = useState(false)
   const [healthy, setHealthy] = useState(isHealthy)
+  const [makingHealthy, setMakingHealthy] = useState(false)
   const [recipeSaved, setRecipeSaved] = useState(isSaved)
   const [saving, setSaving] = useState(false)
 
@@ -293,6 +294,7 @@ useEffect(() => {
           console.log(response)
           const imageData = response.data.data[0].b64_json;
           setImgSrc(`data:image/png;base64,${imageData}`);
+          setEnhanced(true)
         })
         .catch((error) => {
           console.error("Error occurred:", error);
@@ -305,34 +307,71 @@ useEffect(() => {
     
 
   function getHealthyRecipe() {
-    setLoading(true);
+    setMakingHealthy(true);
 
-    // Submit prompt to openAI API
-    const prompt = `Rewrite this recipe to be healthier: ${JSON.stringify(recipe)} Format response as: {"dish": ${userInput}, "ingredients": ["", "", ...],
-    "instructions": ["1. ...", "2. ...", ... ]} Do not include anything outside of the curly braces.`;
+      const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the healthy version of the recipe. Here is the original recipe for you to make healthy: ${JSON.stringify(recipe)}`;
+    
+      const schema = {
+        "type": "object",
+        "properties": {
+          "dish": {
+            "type": "string",
+            "description": "Descriptive title of the dish"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "instructions": {
+            "type": "array",
+            "description": "Numbered steps to prepare the recipe.",
+            "items": { "type": "string" }
+          }
+        }
+      };
+    
+      const chatCompletionParams = {
+        model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
+        messages: [
+          { role: "system", "content": "You are a helpful recipe assistant." },
+          { role: "user", content: prompt }
+        ],
+        functions: [{ name: "set_recipe", parameters: schema }],
+        function_call: { name: "set_recipe" }
+      };
+    
+      
+    
+      openai.createChatCompletion(chatCompletionParams)
+        .then((completion) => {
+          const generatedText = completion.data.choices[0].message.function_call.arguments;
+          setRecipe(JSON.parse(generatedText));
+          setRecipeSaved(false);
+          setImgSrc("")
 
-    openai.createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-    })
-      .then((completion) => {
-        // Handle API response
-        const generatedText =
-          completion.data.choices[0].message.content;
-
-        console.log(completion);  
-        setLoading(false)
-        setRecipe(JSON.parse(generatedText));
-        setRecipeSaved(false)
-        setHealthy(true)
-        setUserInput("")
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false)
-        setRecipe("");
-      });
-  }
+          const imageParams = {
+            prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
+            n: 1,
+            size: '256x256',
+            response_format: 'b64_json'
+          };
+    
+          return openai.createImage(imageParams);
+        })
+        .then((response) => {
+          console.log(response)
+          const imageData = response.data.data[0].b64_json;
+          setImgSrc(`data:image/png;base64,${imageData}`);
+          setHealthy(true)
+        })
+        .catch((error) => {
+          console.error("Error occurred:", error);
+          setRecipe("");
+        })
+        .finally(() => {
+          setMakingHealthy(true);
+        });
+      }
 
   async function saveRecipe(e) {
   // Store recipe to firebase
@@ -393,7 +432,7 @@ useEffect(() => {
         
           
         {loading &&
-          <button className='btn btn-primary ml-4 cursor-default'>
+          <button className='btn btn-primary cursor-default'>
             <div role="status" className='flex flex-col items-center'>
               <svg aria-hidden="true" className="w-6 h-6 mr-4 text-gray-200 animate-spin  fill-slate-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor" />
@@ -424,10 +463,10 @@ useEffect(() => {
         <div className='flex flex-row sm:w-auto justify-around my-8 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-16  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
-              : <button className={`btn ${enhancing && 'animate-bounce'} w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
+              : <button className={`btn ${enhancing && 'animate-pulse'} w-24 h-16  btn-ghost text-neutral-600 text-xs`} onClick={enhanceRecipe}><span className=''><HandsClapping size={26} weight='light' /></span>enhance</button>}
             {healthy ?
               <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
-              : <button className={`btn w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className=''><Carrot size={26} weight='light' /></span>make healthy</button>}
+              : <button className={`btn ${makingHealthy && 'animate-pulse'} w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className=''><Carrot size={26} weight='light' /></span>make healthy</button>}
             {recipeSaved ?
               <div className='select-none w-24 h-16 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</div>
               : <button className={`btn ${saving && 'animate-pulse'} w-24 h-16 btn-ghost text-neutral-600 text-xs`} onClick={saveRecipe}><span className=''><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
