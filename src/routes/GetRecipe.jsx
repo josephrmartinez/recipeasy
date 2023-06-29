@@ -75,7 +75,6 @@ export default function GetRecipe() {
   
   useEffect(() => {
   if (recipe['ingredients']) {
-    console.log("running useEffect");
     setDishName(recipe['dish']);
     const mappedIngredients = recipe.ingredients.map((ingredient) => ({
       name: ingredient,
@@ -254,7 +253,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
@@ -320,7 +319,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
@@ -388,7 +387,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
