@@ -38,7 +38,7 @@ export default function Root() {
             </NavLink>
         </div>
             
-        <div><Outlet /></div>
+        <div className="w-full"><Outlet /></div>
             
         </div>
     )

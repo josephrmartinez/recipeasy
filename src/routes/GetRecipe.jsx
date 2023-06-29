@@ -132,78 +132,222 @@ useEffect(() => {
 }
 
 
-  function getRecipe() {
-  if (!userInput) {
-    console.error("Please provide a valid input.");
-    return;
-  }
+  // function getRecipe() {
+  // if (!userInput) {
+  //   console.error("Please provide a valid input.");
+  //   return;
+  // }
 
-  setLoading(true);
-  setImgSrc("")
-  setInstructions([])
+  // setLoading(true);
+  // setImgSrc("")
+  // setInstructions([])
 
-  const prompt = `return a recipe for ${userInput}`;
+  // const prompt = `return a recipe for ${userInput}`;
 
-  const schema = {
-    "type": "object",
-    "properties": {
-      "dish": {
-        "type": "string",
-        "description": "Descriptive title of the dish"
-      },
-      "ingredients": {
-        "type": "array",
-        "items": { "type": "string" }
-      },
-      "instructions": {
-        "type": "array",
-        "description": "Numbered steps to prepare the recipe.",
-        "items": { "type": "string" }
-      }
-    }
-  };
+  // const schema = {
+  //   "type": "object",
+  //   "properties": {
+  //     "dish": {
+  //       "type": "string",
+  //       "description": "Descriptive title of the dish"
+  //     },
+  //     "ingredients": {
+  //       "type": "array",
+  //       "items": { "type": "string" }
+  //     },
+  //     "instructions": {
+  //       "type": "array",
+  //       "description": "Numbered steps to prepare the recipe.",
+  //       "items": { "type": "string" }
+  //     }
+  //   }
+  // };
 
-  const chatCompletionParams = {
-    model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
-    messages: [
-      { role: "system", "content": "You are a helpful recipe assistant." },
-      { role: "user", content: prompt }
-    ],
-    functions: [{ name: "set_recipe", parameters: schema }],
-    function_call: { name: "set_recipe" }
-  };
+  // const chatCompletionParams = {
+  //   model: "gpt-3.5-turbo-0613",
+  //   messages: [
+  //     { role: "system", "content": "You are a helpful recipe assistant." },
+  //     { role: "user", content: prompt }
+  //   ],
+  //   functions: [{ name: "set_recipe", parameters: schema }],
+  //   function_call: { name: "set_recipe" }
+  // };
 
   
 
-  openai.createChatCompletion(chatCompletionParams)
-    .then((completion) => {
-      const generatedText = completion.data.choices[0].message.function_call.arguments;
-      const recipeObj = JSON.parse(generatedText)
-      console.log(completion.data.usage)
-      setRecipe(recipeObj);
-      setRecipeSaved(false);
+  // openai.createChatCompletion(chatCompletionParams)
+  //   .then((completion) => {
+  //     const generatedText = completion.data.choices[0].message.function_call.arguments;
+  //     const recipeObj = JSON.parse(generatedText)
+  //     console.log(completion.data.usage)
+  //     setRecipe(recipeObj);
+  //     setRecipeSaved(false);
 
+  //     const imageParams = {
+  //       prompt: `A high quality, det
+  //       ailed, 4k image of ${recipeObj['dish']} for publication in the New York Times Cooking section. Professional food photography. `,
+  //       n: 1,
+  //       size: '256x256',
+  //       response_format: 'b64_json'
+  //     };
+  //     return openai.createImage(imageParams);
+  //   })
+  //   .then((response) => {
+  //     const imageData = response.data.data[0].b64_json;
+  //     setImgSrc(`data:image/png;base64,${imageData}`);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error occurred:", error);
+  //     setRecipe("");
+  //   })
+  //   .finally(() => {
+  //     setLoading(false);
+  //     setUserInput("");
+  //   });
+  // }
+
+
+
+  const schema = {
+        "type": "object",
+        "properties": {
+          "dish": {
+            "type": "string",
+            "description": "Descriptive title of the dish"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "instructions": {
+            "type": "array",
+            "description": "Numbered steps to prepare the recipe.",
+            "items": { "type": "string" }
+          }
+        }
+      };
+    
+      
+
+
+  async function getRecipe() {
+    setLoading(true)
+    const capitalizedInput = userInput.charAt(0).toUpperCase() + userInput.slice(1);
+    setTimeout(() => {
+      
+      setDishName(capitalizedInput);
+    }, 1000);
+    try {
       const imageParams = {
-        prompt: `A high quality, detailed, 4k image of ${recipeObj['dish']} for publication in the New York Times Cooking section.`,
+        prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
         n: 1,
         size: '512x512',
         response_format: 'b64_json'
       };
-      return openai.createImage(imageParams);
-    })
-    .then((response) => {
+      const response = await openai.createImage(imageParams);
       const imageData = response.data.data[0].b64_json;
       setImgSrc(`data:image/png;base64,${imageData}`);
-    })
-    .catch((error) => {
-      console.error("Error occurred:", error);
-      setRecipe("");
-    })
-    .finally(() => {
-      setLoading(false);
-      setUserInput("");
-    });
+
+      const prompt = `return a recipe for ${userInput}`;
+      const chatCompletionParams = {
+        model: "gpt-3.5-turbo-0613",
+        messages: [
+          { role: "system", "content": "You are a helpful recipe assistant." },
+          { role: "user", content: prompt }
+        ],
+        functions: [{ name: "set_recipe", parameters: schema }],
+        function_call: { name: "set_recipe" }
+      };
+
+      
+      const completion = await openai.createChatCompletion(chatCompletionParams);
+      const generatedText = completion.data.choices[0].message.function_call.arguments;
+      const recipeObj = JSON.parse(generatedText);
+      setRecipe(recipeObj);
+      
+      
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setUserInput("")
+      setLoading(false)
+    }
+    
   }
+
+  // function getRecipe() {
+  //   if (!userInput) {
+  //     console.error("Please provide a valid input.");
+  //     return;
+  //   }
+  
+  //   setLoading(true);
+  //   setImgSrc("")
+  //   setInstructions([])
+  
+  //   const prompt = `return a recipe for ${userInput}`;
+  
+  //   const schema = {
+  //     "type": "object",
+  //     "properties": {
+  //       "dish": {
+  //         "type": "string",
+  //         "description": "Descriptive title of the dish"
+  //       },
+  //       "ingredients": {
+  //         "type": "array",
+  //         "items": { "type": "string" }
+  //       },
+  //       "instructions": {
+  //         "type": "array",
+  //         "description": "Numbered steps to prepare the recipe.",
+  //         "items": { "type": "string" }
+  //       }
+  //     }
+  //   };
+  
+  //   const chatCompletionParams = {
+  //     model: "gpt-3.5-turbo-0613",
+  //     messages: [
+  //       { role: "system", "content": "You are a helpful recipe assistant." },
+  //       { role: "user", content: prompt }
+  //     ],
+  //     functions: [{ name: "set_recipe", parameters: schema }],
+  //     function_call: { name: "set_recipe" }
+  //   };
+  
+    
+  
+  //   openai.createChatCompletion(chatCompletionParams)
+  //     .then((completion) => {
+  //       const generatedText = completion.data.choices[0].message.function_call.arguments;
+  //       const recipeObj = JSON.parse(generatedText)
+  //       console.log(completion.data.usage)
+  //       setRecipe(recipeObj);
+  //       setRecipeSaved(false);
+  
+  //       const imageParams = {
+  //         prompt: `A high quality, det
+  //         ailed, 4k image of ${recipeObj['dish']} for publication in the New York Times Cooking section. Professional food photography. `,
+  //         n: 1,
+  //         size: '256x256',
+  //         response_format: 'b64_json'
+  //       };
+  //       return openai.createImage(imageParams);
+  //     })
+  //     .then((response) => {
+  //       const imageData = response.data.data[0].b64_json;
+  //       setImgSrc(`data:image/png;base64,${imageData}`);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error occurred:", error);
+  //       setRecipe("");
+  //     })
+  //     .finally(() => {
+  //       setLoading(false);
+  //       setUserInput("");
+  //     });
+  //   }
 
 
   function getRecipeWithSubstitute() {
@@ -449,8 +593,8 @@ useEffect(() => {
 
 
   return (
-    <div className='flex flex-col items-center'>
-      <div className='flex flex-row mx-auto w-fit'>
+    <div className='flex flex-col items-center w-full'>
+      <div className='flex flex-row mx-auto w-full justify-center mb-6'>
   
         {!loading && 
           <>
@@ -476,25 +620,26 @@ useEffect(() => {
             </div>
             generating recipe</button>}
       </div>
-      
-      
-      
-      <div className='w-8 h-6'></div>
 
 
-      {instructions.length > 1 &&
-        <div className='max-w-lg'>
-          
-      <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+    <div className='w-full max-w-lg'>
+      {dishName &&
+        <div className='w-full'>
+          <div className='text-3xl font-bold mt-3 mb-3'>{dishName}</div>
+        
+          <div className='flex flex-col items-center w-full h-full max-w-lg'>
+              {imgSrc ? (
+              <img className="rounded-lg w-full object-cover shadow-md" src={imgSrc} alt="AI Generated Food Image" />
+            ) : (
+              <img className="rounded-lg w-full object-cover shadow-md animate-pulse" src="/blank.svg" />
+              
+            )}
+          </div>
+        </div>
+      }
      
-      <div className='flex flex-col items-center w-full h-full max-w-lg'>
-          {imgSrc ? (
-          <img className="rounded-lg w-full object-cover shadow-md" src={imgSrc} alt="AI Generated Food Image" />
-        ) : (
-          <img className="rounded-lg w-full object-cover shadow-md animate-pulse" src="/blank.svg" />
-        )}
-      </div>
-     
+     {instructions.length > 11 &&
+     <>
         <div className='flex flex-row sm:w-auto justify-around my-6 mx-auto'>
             {enhanced ?
               <div className='select-none w-24 h-20  flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
@@ -521,8 +666,9 @@ useEffect(() => {
         <div className='text-lg font-bold tracking-wide text-left my-3'>instructions</div>
         <div className='flex flex-col items-start text-left'>{instructions}</div>
         
-        
-      </div>}
+      </>}
+
+
       {popup && 
         <div className='fixed inset-0 flex items-center justify-center z-50'>
         <div className='bg-white shadow-md rounded-lg w-72 sm:w-80 h-72 flex flex-col items-center'>
@@ -533,6 +679,7 @@ useEffect(() => {
           
           </div>
           </div>}
+    </div>
     </div>
   )
 }
