@@ -173,8 +173,6 @@ useEffect(() => {
   //   function_call: { name: "set_recipe" }
   // };
 
-  
-
   // openai.createChatCompletion(chatCompletionParams)
   //   .then((completion) => {
   //     const generatedText = completion.data.choices[0].message.function_call.arguments;
@@ -359,25 +357,6 @@ useEffect(() => {
 
       const prompt = `Rewrite the following recipe with a substitute for this ingredient: ${selectIngredient}. Rename the dish to reflect the new version of the recipe. Here is the original recipe for you to make a variation with: ${JSON.stringify(recipe)}`;
     
-      const schema = {
-        "type": "object",
-        "properties": {
-          "dish": {
-            "type": "string",
-            "description": "Descriptive title of the dish"
-          },
-          "ingredients": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "instructions": {
-            "type": "array",
-            "description": "Numbered steps to prepare the recipe.",
-            "items": { "type": "string" }
-          }
-        }
-      };
-    
       const chatCompletionParams = {
         model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
         messages: [
@@ -387,8 +366,6 @@ useEffect(() => {
         functions: [{ name: "set_recipe", parameters: schema }],
         function_call: { name: "set_recipe" }
       };
-    
-      
     
       openai.createChatCompletion(chatCompletionParams)
         .then((completion) => {
@@ -400,7 +377,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '512x512',
+            size: '256x256',
             response_format: 'b64_json'
           };
     
@@ -425,25 +402,6 @@ useEffect(() => {
 
       const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the enhanced recipe. Here is the original recipe for you to enhance: ${JSON.stringify(recipe)}`;
     
-      const schema = {
-        "type": "object",
-        "properties": {
-          "dish": {
-            "type": "string",
-            "description": "Descriptive title of the dish"
-          },
-          "ingredients": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "instructions": {
-            "type": "array",
-            "description": "Numbered steps to prepare the recipe.",
-            "items": { "type": "string" }
-          }
-        }
-      };
-    
       const chatCompletionParams = {
         model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
         messages: [
@@ -466,7 +424,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '512x512',
+            size: '256x256',
             response_format: 'b64_json'
           };
     
@@ -493,25 +451,6 @@ useEffect(() => {
 
       const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the healthy version of the recipe. Here is the original recipe for you to make healthy: ${JSON.stringify(recipe)}`;
     
-      const schema = {
-        "type": "object",
-        "properties": {
-          "dish": {
-            "type": "string",
-            "description": "Descriptive title of the dish"
-          },
-          "ingredients": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
-          "instructions": {
-            "type": "array",
-            "description": "Numbered steps to prepare the recipe.",
-            "items": { "type": "string" }
-          }
-        }
-      };
-    
       const chatCompletionParams = {
         model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
         messages: [
@@ -521,8 +460,6 @@ useEffect(() => {
         functions: [{ name: "set_recipe", parameters: schema }],
         function_call: { name: "set_recipe" }
       };
-    
-      
     
       openai.createChatCompletion(chatCompletionParams)
         .then((completion) => {
@@ -534,7 +471,7 @@ useEffect(() => {
           const imageParams = {
             prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
             n: 1,
-            size: '512x512',
+            size: '256x256',
             response_format: 'b64_json'
           };
     
