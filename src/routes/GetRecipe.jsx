@@ -232,16 +232,19 @@ useEffect(() => {
 
   async function getRecipe() {
     setLoading(true)
-    const capitalizedInput = userInput.charAt(0).toUpperCase() + userInput.slice(1);
+    const capitalizedInput = userInput
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
     setTimeout(() => {
       
       setDishName(capitalizedInput);
-    }, 1000);
+    }, 2500);
     try {
       const imageParams = {
         prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
         n: 1,
-        size: '512x512',
+        size: '256x256',
         response_format: 'b64_json'
       };
       const response = await openai.createImage(imageParams);
@@ -597,16 +600,17 @@ useEffect(() => {
       <div className='flex flex-row mx-auto w-full justify-center mb-6'>
   
         {!loading && 
-          <>
+          <div className='grid grid-cols-5 gap-3'>
         <input
         type="text"
-        className='input input-bordered w-36 sm:w-48'
+        className='col-span-3 input input-bordered'
         value={userInput}
         onKeyDown={checkForSubmit}
         onChange={(e) => setUserInput(e.target.value.toLowerCase())}/>
-      <button className='btn btn-primary ml-4'
+      <button className='col-span-2 btn btn-primary'
           onClick={getRecipe}>
-          get recipe</button></>}
+          get recipe</button>
+          </div>}
       
         
           
@@ -638,7 +642,7 @@ useEffect(() => {
         </div>
       }
      
-     {instructions.length > 11 &&
+     {instructions.length > 1 &&
      <>
         <div className='flex flex-row sm:w-auto justify-around my-6 mx-auto'>
             {enhanced ?
