@@ -87,18 +87,20 @@ export default function SavedRecipes() {
 
     return (
         <div className='flex flex-col items-center'>
-            <div className='text-xl mb-6 tracking-wide font-bold'>saved recipes</div>
+            <div className='btn btn-wide btn-primary mb-6 cursor-default hover:bg-[#2D6645]'>SAVED RECIPES</div>
             <ul>{recipeList}</ul>
             {popup && 
+                <div className='fixed inset-0 flex items-center justify-center z-50'>
                 <div
                     ref={popupRef}
                     className='bg-white shadow-md rounded-lg w-72 h-72 absolute top-52 flex flex-col items-center'>
+                        
                 <div className='text-lg font-bold my-12' onClick={() => {console.log(dataObj.img)}}>{selectedRecipe['dish']}</div>
                 <button className='btn btn-primary w-48 mb-4'><Link to={'/'}
                     state={{ recipe: selectedRecipe, healthy: dataObj.healthy, saved: dataObj.recipeSaved, enhanced: dataObj.enhanced, dataObj: dataObj, img: dataObj.img }}
                 >get recipe</Link></button>
                 <button className='btn btn-ghost w-48 text-red-500' onClick={()=>deleteRecipe(selectedRecipe['dish'])}>delete</button>
-          </div>}
+          </div></div>}
         </div>    
     )
 }
