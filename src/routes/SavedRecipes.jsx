@@ -86,9 +86,9 @@ export default function SavedRecipes() {
         ))
 
     return (
-        <div className='flex flex-col items-center'>
+        <div className='flex flex-col items-center w-full'>
             <div className='btn btn-wide btn-primary mb-6 cursor-default hover:bg-[#2D6645]'>SAVED RECIPES</div>
-            <ul>{recipeList}</ul>
+            <ul className='w-full'>{recipeList}</ul>
             {popup && 
                 <div className='fixed inset-0 flex items-center justify-center z-50'>
                 <div
