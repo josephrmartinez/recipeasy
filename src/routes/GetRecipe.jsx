@@ -235,7 +235,6 @@ useEffect(() => {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
     setTimeout(() => {
-      
       setDishName(capitalizedInput);
     }, 2500);
     try {
@@ -245,10 +244,11 @@ useEffect(() => {
         size: '512x512',
         response_format: 'b64_json'
       };
-      const response = await openai.createImage(imageParams);
-      const imageData = response.data.data[0].b64_json;
+      const imageResponse = await openai.createImage(imageParams);
+      const imageData = imageResponse.data.data[0].b64_json;
       setImgSrc(`data:image/png;base64,${imageData}`);
-
+      
+      
       const prompt = `return a recipe for ${userInput}`;
       const chatCompletionParams = {
         model: "gpt-3.5-turbo-0613",
@@ -259,18 +259,14 @@ useEffect(() => {
         functions: [{ name: "set_recipe", parameters: schema }],
         function_call: { name: "set_recipe" }
       };
-
-      
       const completion = await openai.createChatCompletion(chatCompletionParams);
       const generatedText = completion.data.choices[0].message.function_call.arguments;
       const recipeObj = JSON.parse(generatedText);
       setRecipe(recipeObj);
-      
-      
     } catch (error) {
       console.error('Error:', error);
     } finally {
-      setUserInput("")
+      setUserInput('')
       setLoading(false)
     }
     
