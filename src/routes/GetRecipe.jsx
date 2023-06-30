@@ -155,7 +155,14 @@ useEffect(() => {
 
 
   async function getRecipe() {
+    setRecipe({})
+    setDishName("")
+    setImgSrc("")
+    setInstructions([])
     setLoading(true)
+    setEnhanced(false)
+    setHealthy(false)
+    setRecipeSaved(false)
     const capitalizedInput = userInput
       .split(' ')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
@@ -277,8 +284,8 @@ useEffect(() => {
     setLoading(true);
     setPopup(false)
 
-      const prompt = `Rewrite the following recipe with a substitute for this ingredient: ${selectIngredient}. Rename the dish to reflect the new version of the recipe. Here is the original recipe for you to make a variation with: ${JSON.stringify(recipe)}`;
-    
+      const prompt = `Provide a creative variation of the following recipe: ${JSON.stringify(recipe)}. Develop your new recipe with a creative substitute for the following ingredient: ${selectedIngredient}. Rename the dish to reflect the new version of the recipe.`;
+      console.log(prompt)
       const chatCompletionParams = {
         model: "gpt-3.5-turbo-0613", // Specify the OpenAI model version here
         messages: [
@@ -297,7 +304,7 @@ useEffect(() => {
           setImgSrc("")
 
           const imageParams = {
-            prompt: `A high-quality, detailed, epically dramatic food photography image of ${dishName} for publication in the New York Times Magazine Cooking section.`,
+            prompt: `A high-quality, detailed, vivid and dramatic food photography image of ${dishName} for publication in the New York Times Magazine Cooking section.`,
             n: 1,
             size: '512x512',
             response_format: 'b64_json'
