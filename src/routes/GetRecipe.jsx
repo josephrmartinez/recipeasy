@@ -240,9 +240,9 @@ useEffect(() => {
     }, 2500);
     try {
       const imageParams = {
-        prompt: `A high quality, detailed, 4k image of ${userInput} for publication in the New York Times Cooking section.`,
+        prompt: `A high quality, detailed, 4k food photography image of ${userInput} for publication in the New York Times Magazine Cooking section.`,
         n: 1,
-        size: '256x256',
+        size: '512x512',
         response_format: 'b64_json'
       };
       const response = await openai.createImage(imageParams);
@@ -583,18 +583,28 @@ useEffect(() => {
      <>
         <div className='flex flex-row sm:w-auto justify-around my-6 mx-auto'>
             {enhanced ?
-              <div className='select-none w-24 h-20  flex flex-col items-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
+              <div className='select-none w-20 h-20  flex flex-col items-center justify-evenly uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><HandsClapping size={26} weight='duotone' fill='green' /></span>enhanced</div>
               : <div 
-              className={`flex flex-col cursor-pointer rounded-md hover:bg-neutral-200 w-24 h-20`} 
+              className={`flex flex-col items-center justify-evenly text-neutral-600 cursor-pointer rounded-md w-20 h-20`} 
               onClick={enhanceRecipe}>
                 <div className={`${enhancing && 'animate-bounce'}`}><HandsClapping size={26} weight='light'/></div>
-                <div className='uppercase font-semibold text-neutral-600 text-xs'>enhance</div></div>}
+                <div className='uppercase font-semibold  text-xs'>enhance</div></div>}
             {healthy ?
-              <div className='select-none w-24 h-20 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
-              : <button className={`btn w-24 h-20 btn-ghost active:bg-none text-neutral-600 text-xs`} onClick={getHealthyRecipe}><span className={`${makingHealthy && 'animate-bounce'}`}><Carrot size={26} weight='light' /></span>make healthy</button>}
+              <div className='select-none w-24 h-20 flex flex-col items-center justify-evenly uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><Carrot size={26} weight='duotone' fill='orange' /></span>healthy</div>
+              : <div 
+              className={`flex flex-col items-center justify-evenly text-neutral-600 cursor-pointer rounded-md  w-20 h-20`} 
+              onClick={getHealthyRecipe}>
+                <div className={`${makingHealthy && 'animate-bounce'}`}><Carrot size={26} weight='light'/></div>
+                <div className='uppercase font-semibold  text-xs'>make healthy</div></div>}
+              
             {recipeSaved ?
-              <div className='select-none w-24 h-20 flex flex-col items-center justify-center uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>recipe saved</div>
-              : <button className={`btn w-24 h-20 btn-ghost text-neutral-600 text-xs`} onClick={saveRecipe}><span className={`${saving && 'animate-bounce'}`}><FloppyDisk size={26} weight='light' /></span>save recipe</button>}
+              <div className='select-none w-24 h-20 flex flex-col items-center justify-evenly uppercase cursor-default font-semibold text-neutral-600 text-xs'><span className='mb-2'><FloppyDiskBack size={26} weight='duotone' fill='grey'/></span>saved</div>
+              : <div 
+              className={`flex flex-col items-center justify-evenly text-neutral-600 cursor-pointer rounded-md  w-20 h-20`} 
+              onClick={saveRecipe}>
+                <div className={`${saving && 'animate-bounce'}`}><FloppyDisk size={26} weight='light'/></div>
+                <div className='uppercase font-semibold  text-xs'>save recipe</div></div>
+                }
           </div>
         
         <div className='text-lg font-bold tracking-wide text-left my-3'>ingredients</div>
