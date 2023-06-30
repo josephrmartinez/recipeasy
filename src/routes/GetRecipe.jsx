@@ -145,7 +145,7 @@ useEffect(() => {
           },
           "instructions": {
             "type": "array",
-            "description": "Numbered steps to prepare the recipe.",
+            "description": "Steps to prepare the recipe. DO NOT NUMBER THE STEPS.",
             "items": { "type": "string" }
           }
         }
