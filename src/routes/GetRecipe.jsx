@@ -132,80 +132,6 @@ useEffect(() => {
 }
 
 
-  // function getRecipe() {
-  // if (!userInput) {
-  //   console.error("Please provide a valid input.");
-  //   return;
-  // }
-
-  // setLoading(true);
-  // setImgSrc("")
-  // setInstructions([])
-
-  // const prompt = `return a recipe for ${userInput}`;
-
-  // const schema = {
-  //   "type": "object",
-  //   "properties": {
-  //     "dish": {
-  //       "type": "string",
-  //       "description": "Descriptive title of the dish"
-  //     },
-  //     "ingredients": {
-  //       "type": "array",
-  //       "items": { "type": "string" }
-  //     },
-  //     "instructions": {
-  //       "type": "array",
-  //       "description": "Numbered steps to prepare the recipe.",
-  //       "items": { "type": "string" }
-  //     }
-  //   }
-  // };
-
-  // const chatCompletionParams = {
-  //   model: "gpt-3.5-turbo-0613",
-  //   messages: [
-  //     { role: "system", "content": "You are a helpful recipe assistant." },
-  //     { role: "user", content: prompt }
-  //   ],
-  //   functions: [{ name: "set_recipe", parameters: schema }],
-  //   function_call: { name: "set_recipe" }
-  // };
-
-  // openai.createChatCompletion(chatCompletionParams)
-  //   .then((completion) => {
-  //     const generatedText = completion.data.choices[0].message.function_call.arguments;
-  //     const recipeObj = JSON.parse(generatedText)
-  //     console.log(completion.data.usage)
-  //     setRecipe(recipeObj);
-  //     setRecipeSaved(false);
-
-  //     const imageParams = {
-  //       prompt: `A high quality, det
-  //       ailed, 4k image of ${recipeObj['dish']} for publication in the New York Times Cooking section. Professional food photography. `,
-  //       n: 1,
-  //       size: '256x256',
-  //       response_format: 'b64_json'
-  //     };
-  //     return openai.createImage(imageParams);
-  //   })
-  //   .then((response) => {
-  //     const imageData = response.data.data[0].b64_json;
-  //     setImgSrc(`data:image/png;base64,${imageData}`);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error occurred:", error);
-  //     setRecipe("");
-  //   })
-  //   .finally(() => {
-  //     setLoading(false);
-  //     setUserInput("");
-  //   });
-  // }
-
-
-
   const schema = {
         "type": "object",
         "properties": {
@@ -446,6 +372,7 @@ useEffect(() => {
 
   function getHealthyRecipe() {
     setMakingHealthy(true);
+    setLoading(true)
 
       const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the healthy version of the recipe. Here is the original recipe for you to make healthy: ${JSON.stringify(recipe)}`;
     
@@ -486,6 +413,7 @@ useEffect(() => {
           setRecipe("");
         })
         .finally(() => {
+          setLoading(false)
           setMakingHealthy(true);
         });
       }
