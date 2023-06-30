@@ -239,7 +239,7 @@ useEffect(() => {
     }, 2500);
     try {
       const imageParams = {
-        prompt: `A high quality, detailed, 4k food photography image of ${userInput} for publication in the New York Times Magazine Cooking section.`,
+        prompt: `A high-quality, detailed, epically dramatic food photography image of ${userInput} for publication in the New York Times Magazine Cooking section.`,
         n: 1,
         size: '512x512',
         response_format: 'b64_json'
@@ -371,9 +371,9 @@ useEffect(() => {
           setImgSrc("")
 
           const imageParams = {
-            prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
+            prompt: `A high-quality, detailed, epically dramatic food photography image of ${dishName} for publication in the New York Times Magazine Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
@@ -395,6 +395,7 @@ useEffect(() => {
 
   function enhanceRecipe() {
     setEnhancing(true)
+    setLoading(true);
 
       const prompt = `Enhance this recipe to be more flavorful and interesting. Rename the dish to reflect the enhanced recipe. Here is the original recipe for you to enhance: ${JSON.stringify(recipe)}`;
     
@@ -418,9 +419,9 @@ useEffect(() => {
           setImgSrc("")
 
           const imageParams = {
-            prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
+            prompt: `A high-quality, detailed, epically dramatic food photography image of ${dishName} for publication in the New York Times Magazine Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
@@ -437,6 +438,7 @@ useEffect(() => {
           setRecipe("");
         })
         .finally(() => {
+          setLoading(false);
           setEnhancing(false)
         });
       }
@@ -465,9 +467,9 @@ useEffect(() => {
           setImgSrc("")
 
           const imageParams = {
-            prompt: `A high quality, detailed, 4k image of ${dishName} for publication in the New York Times Cooking section.`,
+            prompt: `A high-quality, detailed, epically dramatic food photography image of ${dishName} for publication in the New York Times Magazine Cooking section.`,
             n: 1,
-            size: '256x256',
+            size: '512x512',
             response_format: 'b64_json'
           };
     
