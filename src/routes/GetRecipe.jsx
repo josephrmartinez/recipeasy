@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import '../App.css'
-import { db } from '../../firebase';
+import { db, storage } from '../../firebase';
 import { collection, addDoc } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { Configuration, OpenAIApi } from "openai";
 import { FloppyDisk, FloppyDiskBack, HandsClapping, Carrot } from "@phosphor-icons/react";
 import { useLocation } from 'react-router-dom';
@@ -174,13 +175,13 @@ useEffect(() => {
       const imageParams = {
         prompt: `A high-quality, detailed, epically dramatic food photography image of ${userInput} for publication in the New York Times Magazine Cooking section.`,
         n: 1,
-        size: '512x512',
-        response_format: 'b64_json'
+        size: '512x512'
       };
       const imageResponse = await openai.createImage(imageParams);
-      const imageData = imageResponse.data.data[0].b64_json;
-      setImgSrc(`data:image/png;base64,${imageData}`);
-      
+      // const imageData = imageResponse.data.data[0].b64_json;
+      // setImgSrc(`data:image/png;base64,${imageData}`);
+      const imageURL = imageResponse.data.data[0].url;
+      setImgSrc(imageURL);
       
       const prompt = `return a recipe for ${userInput}`;
       const chatCompletionParams = {
@@ -429,13 +430,26 @@ useEffect(() => {
   // Store recipe to firebase
     setSaving(true)
     try {
+      // Download the image from the URL
+      const imageResponse = await fetch(imgSrc)
+      const imageData = await imageResponse.blob();
+
+      // Upload the image to Firebase Cloud Storage
+      const storageRef = ref(storage, 'images/recipe.jpg')
+      await uploadBytes(storageRef, imageData);
+
+      // Get the download URL of the stored image
+      const imageUrl = await getDownloadURL(storageRef)
+
+      // store the recipe to Firebase
+    
       const docRef = await addDoc(collection(db, "recipes"), {
         recipe: recipe,
         date: new Date(),
         recipeSaved: true,
         healthy: healthy,
         enhanced: enhanced,
-        img: imgSrc
+        img: imageUrl
       });
       console.log("Document written with ID: ", docRef.id);
       setSaving(false)

@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getFirestore, collection, doc, getDoc } from "firebase/firestore";
+import { getStorage } from 'firebase/storage';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -23,6 +24,9 @@ const analytics = getAnalytics(app);
 
 // Connect to firebase
 export const db = getFirestore(app);
+
+// Connect to storage
+export const storage = getStorage(app);
 
 // Get api key
 // const docRef = doc(db, 'api-keys', 'openai-api-key')
