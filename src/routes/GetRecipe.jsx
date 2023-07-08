@@ -7,6 +7,12 @@ import { Configuration, OpenAIApi } from "openai";
 import { FloppyDisk, FloppyDiskBack, HandsClapping, Carrot } from "@phosphor-icons/react";
 import { useLocation } from 'react-router-dom';
 import sendToTrello from '../utilities/sendToTrello';
+import { getFunctions, httpsCallable } from "firebase/functions";
+
+
+const functions = getFunctions()
+const saveImage = httpsCallable(functions, 'saveImage');
+
 
 const apiKey = import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -430,18 +436,14 @@ useEffect(() => {
   // Store recipe to firebase
     setSaving(true)
     try {
-      // Download the image from the URL
-      const imageResponse = await fetch(imgSrc)
-      const imageData = await imageResponse.blob();
-
-      // Upload the image to Firebase Cloud Storage
-      const storageRef = ref(storage, 'images/recipe.jpg')
-      await uploadBytes(storageRef, imageData);
-
-      // Get the download URL of the stored image
-      const imageUrl = await getDownloadURL(storageRef)
-
-      // store the recipe to Firebase
+      saveImage({ imageUrl: imgSrc, destination: `images/${dishName}.jpg` })
+        .then((result) => {
+          console.log('Image saved successfully:', result.data);
+        })
+        .catch((error) => {
+          console.error('Error saving image:', error);
+        });
+        
     
       const docRef = await addDoc(collection(db, "recipes"), {
         recipe: recipe,
@@ -449,7 +451,6 @@ useEffect(() => {
         recipeSaved: true,
         healthy: healthy,
         enhanced: enhanced,
-        img: imageUrl
       });
       console.log("Document written with ID: ", docRef.id);
       setSaving(false)

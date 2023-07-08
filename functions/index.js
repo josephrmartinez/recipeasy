@@ -1,19 +1,52 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+// The Cloud Functions for Firebase SDK to create Cloud Functions and set up triggers.
+const functions = require('firebase-functions');
 
-const {onRequest} = require("firebase-functions/v2/https");
-const logger = require("firebase-functions/logger");
+// Bring in axios to handle image fetch request
+const axios = require('axios');
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+// The Firebase Admin SDK to access Firestore.
+const admin = require('firebase-admin');
+admin.initializeApp({storageBucket: "gs://skiptorecipe-e2ede.appspot.com/"});
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+
+
+exports.saveImage = functions.https.onCall(async (data, context) => {
+    try {
+      const { imageUrl, destination } = data;
+  
+      if (!imageUrl || !destination) {
+        throw new functions.https.HttpsError(
+          'invalid-argument',
+          'Invalid request: imageUrl and destination are required.'
+        );
+      }
+  
+      const { data: imageStream } = await axios.get(imageUrl, {
+        responseType: 'stream',
+      });
+  
+      const file = admin.storage().bucket().file(destination);
+      const writeStream = file.createWriteStream({
+        contentType: 'image/jpeg',
+        public: true,
+      });
+  
+      imageStream.pipe(writeStream);
+  
+      return new Promise((resolve, reject) => {
+        writeStream.on('finish', () => {
+          console.log('Successfully uploaded image');
+          resolve('Image saved successfully.');
+        });
+  
+        writeStream.on('error', (error) => {
+          console.error('Error uploading image:', error);
+          reject(new functions.https.HttpsError('internal', 'Error uploading image.'));
+        });
+      });
+    } catch (error) {
+      console.error('Error fetching or uploading image:', error.message);
+      throw new functions.https.HttpsError('internal', 'Error fetching or uploading image.');
+    }
+  });
+  

@@ -6,11 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint src --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.0.9",
+    "axios": "^1.4.0",
     "daisyui": "^2.51.6",
     "dotenv": "^16.0.3",
     "firebase": "^9.21.0",
