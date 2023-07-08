@@ -9,44 +9,51 @@ const admin = require('firebase-admin');
 admin.initializeApp({storageBucket: "gs://skiptorecipe-e2ede.appspot.com/"});
 
 
-
-exports.saveImage = functions.https.onCall(async (data, context) => {
+exports.saveImage = functions.https.onRequest(async (req, res) => {
     try {
-      const { imageUrl, destination } = data;
+      res.set({
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      });
   
-      if (!imageUrl || !destination) {
-        throw new functions.https.HttpsError(
-          'invalid-argument',
-          'Invalid request: imageUrl and destination are required.'
-        );
+      if (req.method === 'OPTIONS') {
+        res.status(204).send('');
+        return;
       }
   
-      const { data: imageStream } = await axios.get(imageUrl, {
-        responseType: 'stream',
-      });
+      const { imageUrl, destination } = req.body;
+  
+      if (!imageUrl || !destination) {
+        throw new Error('Invalid request: imageUrl and destination are required.');
+      }
+  
+      const { data } = await axios.get(imageUrl, { responseType: 'stream' });
   
       const file = admin.storage().bucket().file(destination);
       const writeStream = file.createWriteStream({
-        contentType: 'image/jpeg',
-        public: true,
+        metadata: {
+          contentType: 'image/jpeg',
+          metadata: {
+            custom: 'metadata'
+          }
+        }
+      })
+  
+      data.pipe(writeStream);
+  
+      writeStream.on('finish', () => {
+        console.log('Successfully uploaded image');
+        res.sendStatus(200);
       });
   
-      imageStream.pipe(writeStream);
-  
-      return new Promise((resolve, reject) => {
-        writeStream.on('finish', () => {
-          console.log('Successfully uploaded image');
-          resolve('Image saved successfully.');
-        });
-  
-        writeStream.on('error', (error) => {
-          console.error('Error uploading image:', error);
-          reject(new functions.https.HttpsError('internal', 'Error uploading image.'));
-        });
+      writeStream.on('error', (error) => {
+        console.error('Error uploading image:', error);
+        res.sendStatus(500);
       });
     } catch (error) {
       console.error('Error fetching or uploading image:', error.message);
-      throw new functions.https.HttpsError('internal', 'Error fetching or uploading image.');
+      res.sendStatus(500);
     }
   });
   

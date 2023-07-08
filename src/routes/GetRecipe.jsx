@@ -438,7 +438,7 @@ useEffect(() => {
     try {
       saveImage({ imageUrl: imgSrc, destination: `images/${dishName}.jpg` })
         .then((result) => {
-          console.log('Image saved successfully:', result.data);
+          console.log('Image saved successfully:', result);
         })
         .catch((error) => {
           console.error('Error saving image:', error);
