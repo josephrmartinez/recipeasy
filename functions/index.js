@@ -29,11 +29,15 @@ exports.saveImage = functions.https.onCall(async (data, context) => {
         metadata: {
           contentType: 'image/jpeg',
           metadata: {
+            firebaseStorageDownloadTokens: 12345,
             custom: 'metadata'
           }
         }
       });
   
+
+      
+
       imageStream.pipe(writeStream);
   
       return new Promise((resolve, reject) => {

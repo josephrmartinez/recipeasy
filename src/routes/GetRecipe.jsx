@@ -445,12 +445,15 @@ useEffect(() => {
         });
         
     
+       const encodedString = encodeURIComponent(dishName)
+
       const docRef = await addDoc(collection(db, "recipes"), {
         recipe: recipe,
         date: new Date(),
         recipeSaved: true,
         healthy: healthy,
         enhanced: enhanced,
+        img: `https://firebasestorage.googleapis.com/v0/b/skiptorecipe-e2ede.appspot.com/o/images%2F${encodedString}.jpg?alt=media&token=12345`
       });
       console.log("Document written with ID: ", docRef.id);
       setSaving(false)
